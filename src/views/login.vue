@@ -1,14 +1,11 @@
 <template>
-  <div id="app">
+  <div id="app" style="height: 450px">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
-    <v-app id="inspire">
+    <v-app id="inspire" style="height: 450px">
       <v-container grid-list-md style="margin:0px">
         <v-layout row wrap>
           <v-flex xs12 >
             <nav_header ref="header"></nav_header>
-          </v-flex>
-          <v-flex xs12>
-            <div style="height: 35px"></div>
           </v-flex>
           <v-flex xs12 style="height: 30px">
             <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems"></nav_breadcrumb>
@@ -40,7 +37,7 @@
                       <v-flex xs12>
                         <v-btn
                           color="success"
-                          @click="register"
+                          @click="login"
                         >
                           Login
                         </v-btn>
@@ -71,6 +68,23 @@
     name: "register",
     data(){
       return {
+          nameRules:[
+              v => !!v || 'Name is required',
+              v => (v && v.length <= 15) || 'Name must be less than 15 characters'
+          ],
+          passwordRules:[
+              v => !!v || 'Password is required',
+          ],
+          rpasswordRules:[
+              v => !!v || 'Password is required',
+              v => v === this.password || 'Password is not consistant'
+          ],
+          emailRules:[
+              value => {
+                  const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                  return pattern.test(value) || 'Invalid e-mail.'
+              }
+          ],
         tipShow:false,
         userid:"",
         username:"",

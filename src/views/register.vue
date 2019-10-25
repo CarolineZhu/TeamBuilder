@@ -1,21 +1,18 @@
 <template>
-  <div id="app">
+  <div id="app" style="height: 1000px">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
-    <v-app id="inspire">
+    <v-app id="inspire" style="height: 1000px">
       <v-container grid-list-md style="margin:0px">
         <v-layout row wrap>
           <v-flex xs12 >
             <nav_header ref="header"></nav_header>
           </v-flex>
-          <v-flex xs12>
-            <div style="height: 35px"></div>
-          </v-flex>
           <v-flex xs12 style="height: 30px">
             <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems"></nav_breadcrumb>
           </v-flex>
           <v-flex xs12>
-            <v-content style="padding: 10px;padding-bottom: 20px">
-                    <v-card style="position: absolute; left: 50%; top: 50%;transform: translate(-50%, 0%); width: 500px">
+            <v-content style="padding: 10px;padding-bottom: 20px;">
+                    <v-card style="position: absolute; left: 50%; top: 50%;transform: translate(-50%, 0%); width: 500px; margin: 20px">
                       <my_form v-bind:mdShow="true">
                         <div slot="text_fields" >
                           <h2>Register</h2>
