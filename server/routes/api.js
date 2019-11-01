@@ -1,0 +1,137 @@
+var express = require('express');
+var router = express.Router();
+
+var mongoose=require('mongoose');
+var Users=require('../models/users');
+
+mongoose.connect('mongodb://127.0.0.1:27017/team_builder',{useNewUrlParser: true });
+mongoose.connection.on("connected",()=>{
+    console.log("connect success.");
+
+});
+
+mongoose.connection.on("error",(error)=>{
+    console.log(error);
+});
+
+mongoose.connection.on("disconnected",()=>{
+    console.log("disconnect.");
+});
+
+function on_err(req, res, err, message){
+    console.log(err);
+    res.json({
+        status:'500',
+        error:err,
+        message:message
+    });
+}
+
+
+router.post("/register",  (req, res, next) => {
+    var username=req.body.username;
+    var password=req.body.password;
+    var email=req.body.email;
+    var playingGames = req.body.playingGames;
+    var favoriteGameType = req.body.favoriteGameType;
+    var role = req.body.role;
+    var playingTime = req.body.playingTime;
+    var platform = req.body.platform;
+
+    Users.findOne({username:username },  (err, doc) => {
+        if(err){
+            on_err(req, res, err, "error when findOne.");
+        }else if (doc){
+            on_err(req, res, undefined, "user already exist.");
+        }else {
+            Users.create({
+                username: username,
+                password: password,
+                email: email,
+                playingGames:playingGames,
+                favoriteGameType:favoriteGameType,
+                role:role,
+                playingTime:playingTime,
+                platform:platform
+            },  (err, doc) => {
+                if (err){
+                    on_err(req, res, err, "error when create user.");
+                }else{
+                    res.json({
+                        status:'200',
+                        msg:"",
+                        result:{
+                        }
+                    });
+                }
+            })
+        }
+    });
+});
+
+router.post("/login",  (req, res, next) => {
+    var username= req.body.username;
+    var password= req.body.password;
+    Users.findOne({username:username, password:password}, (err, doc) => {
+        if(err){
+            on_err(req, res, err, "error when finding user.");
+        }else if(!doc) {
+            res.json({
+                status:'201',
+                message:"username or password wrong.",
+                error: undefined,
+                result:{
+                }});
+        }else {
+            var cartNum=0;
+            res.cookie("userid",doc._id.toString(),{
+                path:'/',
+                maxAge:1000*60*600
+            });
+            res.cookie("username",doc.username,{
+                path:'/',
+                maxAge:1000*60*600
+            });
+            res.json({
+                status:'200',
+                message:"",
+                result:{
+                    userid:doc._id,
+                    username:doc.username,
+                    cartNum:cartNum
+                }});
+        }
+    })
+});
+
+router.post("/getUserInfo", (req, res, next) => {
+    var username= req.body.username;
+    Users.findOne({username:username}, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding user.");
+        } else if (!doc) {
+            res.json({
+                status: '201',
+                message: "username or password wrong.",
+                error: undefined,
+                result: {}
+            });
+        }else{
+            res.json({
+                status:'200',
+                message:"",
+                result:{
+                    userid:doc._id,
+                    username:doc.username,
+                    playingGames:doc.playingGames,
+                    favoriteGameType: doc.favorateGameType,
+                    playingTime:doc.playingTime,
+                    role:doc.role,
+                    platform:doc.platform
+                }});
+        }
+    });
+})
+;
+
+module.exports = router;

@@ -124,13 +124,9 @@
           }).then((res)=>{
             if(res.data.status==="200"){
               this.userid=res.data.result.userid;
-              this.password="";
               this.loginFlag=true;
-              this.cartNum=res.data.result.cartNum;
-              Cookies.set("cartNum", this.cartNum);
-              this.close_modal('login');
               this.username=res.data.result.username;
-
+              alert("login success");
             }else{
               this.errorTip=res.data.message;
               this.tipShow=true;

@@ -45,6 +45,17 @@
                             required
                           ></v-text-field>
                           <h2>Questions</h2>
+                          <p>What kind of game platform are you playing?</p>
+                          <v-chip  @click="closePlatformChip(index)" v-for="(type,index) in gamePlatforms" >
+                            {{type}}
+                          </v-chip>
+                          <v-layout row wrap style="text-align: center">
+                            <v-flex xs12>
+                              <v-select v-model="selectedPlatform" :items="platforms" label="choose game platform" outlined @change="addPlatform()">
+
+                              </v-select>
+                            </v-flex>
+                          </v-layout>
                           <p>What's your insterested game types?</p>
                           <v-chip  @click="closeTypeChip(index)" v-for="(type,index) in gameTypes" >
                             {{type}}
@@ -138,6 +149,9 @@
           types:["MOBA", "RPG", "FPS","MMORPG", "Action", "Strategy", "Sports", "Racing"],
           times:["morning", "afternoon", "evening", "weekends"],
           roles:["attacker", "healer", "protector"],
+            platforms:["PC", "PS4", "XBOX", "NS"],
+            selectedPlatform:"",
+          gamePlatforms:[],
           selectedType:"",
           gameTypes:[],
           playingGames:[],
@@ -178,20 +192,31 @@
             axios.post("/api/register", {
               username: this.username,
               password: this.password,
-              email: this.email
+              email: this.email,
+                playingGames:this.playingGames,
+                favoriteGameType:this.gameTypes,
+                role:this.role,
+                playingTime:this.playingTime,
+                platform:this.gamePlatforms
             }).then((res)=>{
               if(res.data.status==="200"){
                 alert("success register!");
-                this.close_modal('register');
               }else{
                 this.errorTip=res.data.message;
                 this.tipShow=true;
               }
             },(error)=>{
+                console.log(error);
               alert("cannot connect to server.");
             })
           }
         },
+          closePlatformChip(index){
+              this.gamePlatforms.splice(index, 1);
+          },
+          addPlatform(){
+              this.gamePlatforms.push(this.selectedPlatform);
+          },
         closeTypeChip(index){
           this.gameTypes.splice(index, 1);
         },
