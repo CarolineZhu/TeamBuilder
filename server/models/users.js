@@ -4,11 +4,10 @@ var userSchema=new Schema({
     username: String,
     password: String,
     email: String,
-    playingGames:[String],
-    favoriteGameType:[String],
+    playingGames:[Number],
+    favoriteGameType:[Number],
     playingTime:String,
-    platform:[String],
-    role:String
-
+    platform:[Number],
+    team:[Number]
 });
 module.exports = mongoose.model("user", userSchema);

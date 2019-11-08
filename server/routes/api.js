@@ -98,24 +98,18 @@ router.post("/login",  (req, res, next) => {
                 result:{
                     userid:doc._id,
                     username:doc.username,
-                    cartNum:cartNum
                 }});
         }
     })
 });
 
-router.post("/getUserInfo", (req, res, next) => {
-    var username= req.body.username;
-    Users.findOne({username:username}, (err, doc)=> {
+router.get("/get_user_info",  (req, res, next) => {
+    var username=req.query.username;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
         if (err) {
-            on_err(req, res, err, "error when finding user.");
-        } else if (!doc) {
-            res.json({
-                status: '201',
-                message: "username or password wrong.",
-                error: undefined,
-                result: {}
-            });
+            on_err(req, res, err, "error when finding orders.");
         }else{
             res.json({
                 status:'200',
@@ -124,14 +118,11 @@ router.post("/getUserInfo", (req, res, next) => {
                     userid:doc._id,
                     username:doc.username,
                     playingGames:doc.playingGames,
-                    favoriteGameType: doc.favorateGameType,
+                    favoriteGameType: doc.favoriteGameType,
                     playingTime:doc.playingTime,
-                    role:doc.role,
                     platform:doc.platform
                 }});
         }
     });
-})
-;
-
+});
 module.exports = router;

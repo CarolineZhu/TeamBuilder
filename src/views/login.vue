@@ -126,16 +126,25 @@
               this.userid=res.data.result.userid;
               this.loginFlag=true;
               this.username=res.data.result.username;
-              alert("login success");
+              this.to_info()
             }else{
               this.errorTip=res.data.message;
-              this.tipShow=true;
+                this.tipShow=true;
+
             }
           },(error)=>{
             alert("cannot connect to server.");
           })
         }
-      }
+      },
+        to_info(){
+            this.$router.push({
+                name:"user_info",
+                params:{
+                    username: this.username,
+                }
+            });
+        }
     }
   }
 </script>
