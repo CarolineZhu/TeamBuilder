@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-
+var recommend = require('./recommend')
 var mongoose=require('mongoose');
 var Users=require('../models/users');
-mongoose.connect('mongodb://127.0.0.1:27017/team_builder',{useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/Players',{useNewUrlParser: true });
 mongoose.connection.on("connected",()=>{
     console.log("connect success.");
 
@@ -118,18 +118,40 @@ router.get("/get_user_info",  (req, res, next) => {
         if (err) {
             on_err(req, res, err, "error when finding orders.");
         }else{
-            res.json({
-                status:'200',
-                message:"",
-                result:{
-                    userid:doc._id,
-                    username:doc.username,
-                    playingGames:doc.playingGames,
-                    favoriteGameType: doc.favoriteGameType,
-                    playingTime:doc.playingTime,
-                    platform:doc.platform
-                }});
+            if (doc) {
+                res.json({
+                    status: '200',
+                    message: "",
+                    result: {
+                        userid: doc._id,
+                        username: doc.username,
+                        playingGames: doc.playingGames,
+                        favoriteGameType: doc.favoriteGameType,
+                        playingTime: doc.playingTime,
+                        platform: doc.platform
+                    }
+                });
+            }
         }
     });
 });
+
+router.get("/get_recommendation",  (req, res, next) => {
+    console.log("API Called: Get Recommendation...")
+    var username=req.query.username;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding orders.");
+        }else{
+            if (doc) {
+                recommend(Users, doc, 10, res);
+            }
+        }
+    });
+
+});
+
+
 module.exports = router;

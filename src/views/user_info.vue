@@ -29,6 +29,18 @@
                                         <p>playing time: {{playingTime}}</p>
 
                                     </div>
+                                    <div slot="btns">
+                                        <v-layout row wrap style="text-align: center">
+                                            <v-flex xs12>
+                                                <v-btn
+                                                        color="success"
+                                                        @click="get_recommendation"
+                                                >
+                                                    Get Recommendation
+                                                </v-btn>
+                                            </v-flex>
+                                        </v-layout>
+                                    </div>
                                 </my_form>
                             </v-card>
                         </v-content></v-flex>
@@ -39,6 +51,7 @@
             </v-container>
         </v-app>
     </div>
+
 </template>
 
 <script>
@@ -92,10 +105,28 @@
                     console.log(res.data);
                     this.gamePlatforms= res.data.result.platform;
                     this.playingGames = res.data.result.playingGames;
-                    this.playingTime = res.data.result.playingTime;
+                    switch(res.data.result.playingTime)
+                    {
+                        case 0:
+                            this.playingTime = "Morning";
+                        case 1:
+                            this.playingTime = "Afternoon";
+                        case 2:
+                            this.playingTime = "Evening";
+                        case 3:
+                            this.playingTime = "Weekends";
+                    }
+                })
+            },
+            get_recommendation() {
+                axios.get("/api/get_recommendation", {
+                    params: {
+                        username: this.username
+                    }
+                }).then((res)=>{
+                    console.log(res);
                 })
             }
-
         }
     }
 </script>
