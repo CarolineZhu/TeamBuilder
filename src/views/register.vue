@@ -218,7 +218,6 @@
           this.playingGames.push(this.games.indexOf(this.selectedGame));
         },
         changeRate(data){
-            console.log("afafsdfsdfsfdsfd");
             this.gameTypes[data["typeIndex"]] = data["starNum"];
         }
       }

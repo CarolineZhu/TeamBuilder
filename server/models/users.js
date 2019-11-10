@@ -6,7 +6,7 @@ var userSchema=new Schema({
     email: String,
     playingGames:[Number],
     favoriteGameType:[Number],
-    playingTime:String,
+    playingTime:Number,
     platform:[Number],
     team:[Number]
 });

@@ -3,7 +3,6 @@ var router = express.Router();
 
 var mongoose=require('mongoose');
 var Users=require('../models/users');
-
 mongoose.connect('mongodb://127.0.0.1:27017/team_builder',{useNewUrlParser: true });
 mongoose.connection.on("connected",()=>{
     console.log("connect success.");
@@ -27,7 +26,6 @@ function on_err(req, res, err, message){
     });
 }
 
-
 router.post("/register",  (req, res, next) => {
     var username=req.body.username;
     var password=req.body.password;
@@ -35,9 +33,18 @@ router.post("/register",  (req, res, next) => {
     var playingGames = req.body.playingGames;
     var favoriteGameType = req.body.favoriteGameType;
     var role = req.body.role;
-    var playingTime = req.body.playingTime;
+    var playingTime;
     var platform = req.body.platform;
-
+    switch(req.body.playingTime) {
+        case "morning":
+            playingTime = 0;
+        case "afternoon":
+            playingTime = 1;
+        case "evening":
+            playingTime = 2;
+        case "weekends":
+            playingTime = 3;
+    }
     Users.findOne({username:username },  (err, doc) => {
         if(err){
             on_err(req, res, err, "error when findOne.");
@@ -64,7 +71,7 @@ router.post("/register",  (req, res, next) => {
                         }
                     });
                 }
-            })
+            });
         }
     });
 });
