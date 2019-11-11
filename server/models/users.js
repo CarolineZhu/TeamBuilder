@@ -8,6 +8,8 @@ var userSchema=new Schema({
     favoriteGameType:[Number],
     playingTime:Number,
     platform:[Number],
-    team:[Number]
+    team:[Number],
+    invitations:[String],
+    friends:[String]
 });
 module.exports = mongoose.model("user", userSchema);

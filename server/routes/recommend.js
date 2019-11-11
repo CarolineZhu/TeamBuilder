@@ -1,6 +1,6 @@
 function distance(player1, player2) {
     var dist = 0;
-    var dim = player1.favoriteGameType.length
+    var dim = player1.favoriteGameType.length;
     for (var i = 0; i < dim; i++) {
         dist += (player1.favoriteGameType[i] - player2.favoriteGameType[i]) * (player1.favoriteGameType[i] - player2.favoriteGameType[i])
     }
@@ -38,18 +38,6 @@ function recommend(Users, player, k, res) {
 
         }
     });
-    // var MongoClient = require('mongodb').MongoClient;
-    // var url = "mongodb://localhost:27017/";
-    // MongoClient.connect(url, function(err, db) {
-    //     if (err) throw err;
-    //     var dbo = db.db("Players");
-    //     var query = {"playingTime": player["playingTime"], "platform": {"$in": platformList}, "playingGames":{"$in": gameList}};
-    //     dbo.collection("users").find(query).toArray(function(err, result) {
-    //         if (err) throw err;
-    //         console.log(result);
-    //         db.close();
-    //     });
-    // });
 }
 
 module.exports = recommend;

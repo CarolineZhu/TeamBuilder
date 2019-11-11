@@ -51,7 +51,7 @@
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-btn
                                                                     color="success"
-                                                                    @click="invite"
+                                                                    @click="invite(index)"
                                                             >
                                                                 Invite
                                                             </v-btn>
@@ -141,13 +141,13 @@
                     this.recommendationList=res.data.result.recommendationList;
                 })
             },
-            expand(index){
-                this.shows[index] = !this.shows[index];
-                this.shows.push(false);
-                this.shows.pop();
-            },
-            invite(){
-
+            invite(index){
+                axios.post("/api/send_invitation", {
+                    username: this.username,
+                    player:this.recommendationList[index][1]["username"]
+                }).then((res)=>{
+                    console.log(res);
+                })
             }
         }
 
