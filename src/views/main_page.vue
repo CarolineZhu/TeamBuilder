@@ -8,18 +8,16 @@
             <nav_header ref="header">
             </nav_header>
           </v-flex>
-
-          <v-content >
+          <v-content style="padding: 0px">
             <v-container fluid grid-list-xl style="margin: 0px; padding: 0px">
               <v-layout  row wrap>
                 <v-flex xs12 style="height: 30px; padding-left:40px">
                   <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems">
                   </nav_breadcrumb>
                 </v-flex>
-                <v-flex xs3 class="hidden-sm-and-down">
+                <v-flex xs4 class="hidden-sm-and-down">
                   <v-card
                     height="500"
-                    width="256"
                   >
                     <v-navigation-drawer
                       right
@@ -61,10 +59,7 @@
                   </v-card>
                 </v-flex>
 
-                <v-flex md7>
-                  <v-card height = "500" ></v-card>
-                </v-flex>
-                <v-flex md2>
+                <v-flex md8>
                   <v-card height = "500" ></v-card>
                 </v-flex>
               </v-layout>

@@ -18,62 +18,60 @@
                                     <v-flex xs12>
                                         <v-card>
                                             <v-toolbar flat >
-                                                <p>Recommendations:</p>
+                                                <p>Invitations:</p>
                                             </v-toolbar>
-                                            <v-list v-for="(item, index) in recommendationList" three-line style="padding: 0px;" >
+                                            <v-list v-for="(item, index) in invitations" three-line style="padding: 0px;" >
                                                 <v-list-item >
                                                     <v-layout align-center justify-center row fill-height >
                                                         <v-flex xs1 >
-                                                            {{index+1}}.
+                                                            {{index+1}}
                                                         </v-flex>
                                                         <v-flex v-bind:class="{'xs2':!is_small, 'xs6':is_small}" >
                                                             <div style="padding-left:10px">
                                                                 <v-avatar color="indigo" size="26">
-                                                                    <span class="white--text headline">{{item[1]["username"][0]}}</span>
+                                                                    <span class="white--text headline">{{item["username"][0]}}</span>
                                                                 </v-avatar>
                                                             </div>
                                                         </v-flex>
                                                         <v-flex v-bind:class="{'xs4':!is_small, 'xs6':is_small}">
-                                                            <a>{{item[1]["username"]}}</a>
+                                                            <a>{{item["username"]}}</a>
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-list-item-title style="display: inline">rate: 5</v-list-item-title>
                                                         </v-flex>
-                                                        <v-flex xs1 v-show="!is_small">
+                                                        <v-flex xs2 v-show="!is_small">
                                                             <v-btn
-                                                                    icon
-                                                                    v-on:click="expand(index)"
+                                                                    color="red"
+                                                                    @click="deny"
                                                             >
-                                                                <v-icon v-show="shows[index]">mdi-chevron-up</v-icon>
-                                                                <v-icon v-show="!shows[index]">mdi-chevron-down</v-icon>
+                                                                Deny
                                                             </v-btn>
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-btn
                                                                     color="success"
-                                                                    @click="invite"
+                                                                    @click="accept"
                                                             >
-                                                                Invite
+                                                                Accept
                                                             </v-btn>
                                                         </v-flex>
-                                                    <v-flex xs12>
-                                                    <v-expand-transition>
-                                                        <div v-show="shows[index]">
-                                                            <v-divider></v-divider>
+                                                        <v-flex xs12>
+                                                            <v-expand-transition>
+                                                                <div v-show="shows[index]">
+                                                                    <v-divider></v-divider>
 
-                                                            <v-card-text>
-                                                                <div align="left">
-                                                                    Games:
-                                                                    <v-chip v-for='i in item[1].playingGames'>
-                                                                        {{games[i]}}
-                                                                    </v-chip>
-                                                                    <p>Time: {{times[item[1]["playingTime"]]}}</p>
+                                                                    <v-card-text>
+                                                                        <div align="left">
+                                                                            Games:
+                                                                            <v-chip v-for='i in item[1].playingGames'>
+                                                                                {{games[i]}}
+                                                                            </v-chip>
+                                                                            <p>Time: {{times[item[1]["playingTime"]]}}</p>
+                                                                        </div>
+                                                                    </v-card-text>
                                                                 </div>
-
-                                                            </v-card-text>
-                                                        </div>
-                                                    </v-expand-transition>
-                                                    </v-flex>
+                                                            </v-expand-transition>
+                                                        </v-flex>
                                                     </v-layout>
                                                 </v-list-item>
                                                 <v-divider></v-divider>
@@ -103,7 +101,7 @@
 
 
     export default {
-        name: "recommendation",
+        name: "messages",
         data(){
             return {
                 breadcrumbItems:[{
@@ -112,7 +110,7 @@
                     href:"/"
                 }],
                 username:"",
-                recommendationList:[],
+                invitations:[],
                 is_small:false,
                 times: data["times"],
                 games: data["games"],
@@ -132,7 +130,7 @@
 
         },
         methods:{
-            get_recommendation() {
+            get_invitations() {
                 axios.get("/api/get_recommendation", {
                     params: {
                         username: this.username
@@ -141,12 +139,10 @@
                     this.recommendationList=res.data.result.recommendationList;
                 })
             },
-            expand(index){
-                this.shows[index] = !this.shows[index];
-                this.shows.push(false);
-                this.shows.pop();
+            accept(){
+
             },
-            invite(){
+            deny(){
 
             }
         }
