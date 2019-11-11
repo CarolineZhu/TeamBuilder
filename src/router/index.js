@@ -4,6 +4,7 @@ import register from '../views/register'
 import login from '../views/login'
 import main from '../views/main_page'
 import user_info from '../views/user_info'
+import recommendation from '../views/recommendation'
 
 Vue.use(Router)
 
@@ -28,6 +29,12 @@ export default new Router({
           path:'/user_info',
           name:"user_info",
           component: user_info
-      }
+      },
+      {
+          path:'/recommendation',
+          name:"recommendation",
+          component: recommendation
+      },
+
   ]
 })

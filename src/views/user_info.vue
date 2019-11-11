@@ -34,7 +34,7 @@
                                             <v-flex xs12>
                                                 <v-btn
                                                         color="success"
-                                                        @click="get_recommendation"
+                                                        @click="to_recommendation"
                                                 >
                                                     Get Recommendation
                                                 </v-btn>
@@ -102,7 +102,6 @@
                         username: this.username
                     }
                 }).then((res)=>{
-                    console.log(res.data);
                     this.gamePlatforms= res.data.result.platform;
                     this.playingGames = res.data.result.playingGames;
                     switch(res.data.result.playingTime)
@@ -118,14 +117,13 @@
                     }
                 })
             },
-            get_recommendation() {
-                axios.get("/api/get_recommendation", {
-                    params: {
-                        username: this.username
+            to_recommendation() {
+                this.$router.push({
+                    name:"recommendation",
+                    params:{
+                        username: this.username,
                     }
-                }).then((res)=>{
-                    console.log(res);
-                })
+                });
             }
         }
     }
