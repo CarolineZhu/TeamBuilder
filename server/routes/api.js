@@ -90,7 +90,6 @@ router.post("/login",  (req, res, next) => {
                 result:{
                 }});
         }else {
-            var cartNum=0;
             res.cookie("userid",doc._id.toString(),{
                 path:'/',
                 maxAge:1000*60*600
@@ -105,6 +104,8 @@ router.post("/login",  (req, res, next) => {
                 result:{
                     userid:doc._id,
                     username:doc.username,
+                    friends:doc.friends,
+                    messageNum:doc.invitations.length
                 }});
         }
     })
@@ -153,7 +154,28 @@ router.get("/get_recommendation",  (req, res, next) => {
 
 });
 
+router.get("/get_friend_list",  (req, res, next) => {
+    console.log("API Called: Show invitation list...")
+    var username=req.query.username;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding orders.");
+        }else{
+            if (doc) {
+                res.json({
+                    status: '200',
+                    message: "",
+                    result: {
+                        friends: doc.friends,
+                    }
+                });
+            }
+        }
+    });
 
+});
 router.get("/show_invitation_list",  (req, res, next) => {
     console.log("API Called: Show invitation list...")
     var username=req.query.username;
@@ -181,10 +203,6 @@ router.post("/send_invitation",  (req, res, next) => {
     console.log("API Called: Send invitation...")
     var username=req.body.username;
     var player=req.body.player;
-
-    // console.log(username);
-    // console.log(player);
-
     Users.findOne({
         username:player,
     }, (err, doc)=> {
@@ -192,14 +210,10 @@ router.post("/send_invitation",  (req, res, next) => {
             on_err(req, res, err, "error when finding orders.");
         }else{
             if (doc) {
-                console.log(doc.invitations);
                 if (!doc.invitations.includes(username)) {
-                    console.log(doc.username);
-                    console.log(username);
                     doc.invitations.push(username);
                     doc.save();
                 }
-                console.log(doc.invitations);
                 res.json({
                     status:'200',
                     message:"",
@@ -211,41 +225,71 @@ router.post("/send_invitation",  (req, res, next) => {
     });
 });
 
-router.post("/accept_invitation",  (req, res, next) => {
-    console.log("API Called: Accept invitation...")
+router.post("/deny_invitation", (req, res, next)=>{
     var username=req.body.username;
     var player=req.body.player;
     Users.findOne({
-        username:player,
+        username:username,
     }, (err, doc)=> {
         if (err) {
-            on_err(req, res, err, "error when finding orders.");
+            on_err(req, res, err, "error when accept invitations.");
         }else{
+        for( var i = 0; i < doc.invitations.length; i++){
+            if ( doc.invitations[i] === player) {
+                doc.invitations.splice(i, 1);
+                doc.save();
+            }
+    }
+        res.json({
+            status:'200',
+            message:"",
+            result:{
+            }
+        });
+        }
+    });
+});
+router.post("/accept_invitation",  (req, res, next) => {
+    console.log("API Called: Accept invitation...");
+    var username=req.body.username;
+    var player=req.body.player;
+    console.log(player);
+    Users.findOne({
+        username: player,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when accept invitations.");
+        }else{
+            console.log(doc);
             if (doc) {
                 if (!doc.friends.includes(username)) {
                     doc.friends.push(username);
                     doc.save();
-                }
+                    console.log("find user.");
                 Users.findOne({
                     username:username,
-                }, (err, doc)=> {
+                }, (err, doc2)=> {
                     if (err) {
                         on_err(req, res, err, "error when finding orders.");
                     }else{
-                        if (doc) {
-                            if (!doc.friends.includes(player)) {
-                                doc.friends.push(player);
-                                doc.save();
+                        if (doc2) {
+                            if (!doc2.friends.includes(player)) {
+                                doc2.friends.push(player);
                             }
-                            for( var i = 0; i < doc.invitations.length; i++){
-                                if ( doc.invitations[i] === player) {
-                                    doc.invitations.splice(i, 1);
-                                    doc.save();
+                            for( var i = 0; i < doc2.invitations.length; i++){
+                                if ( doc2.invitations[i] === player) {
+                                    doc2.invitations.splice(i, 1);
+                                    break
                                 }
                             }
+                            console.log(doc2);
+                            doc2.save((err)=>{
+                                console.log(err);
+                            });
                         }
                     }
                 });
+                }
             }
             res.json({
                 status:'200',

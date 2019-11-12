@@ -11,56 +11,75 @@
           <v-content style="padding: 0px">
             <v-container fluid grid-list-xl style="margin: 0px; padding: 0px">
               <v-layout  row wrap>
-                <v-flex xs12 style="height: 30px; padding-left:40px">
+                <v-flex xs12 style="height: 0px; padding-left:40px">
                   <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems">
                   </nav_breadcrumb>
                 </v-flex>
                 <v-flex xs4 class="hidden-sm-and-down">
                   <v-card
-                    height="500"
+                    height="800"
                   >
                     <v-navigation-drawer
-                      right
                       permanent
+                      style="width: 400px"
                     >
-                        <v-list two-line>
-                          <v-avatar>
+                      <v-list-item>
+                          <v-list-item-avatar>
                             <img src="https://randomuser.me/api/portraits/women/81.jpg">
-                          </v-avatar>
-
-                            <v-list-title>Jane Smith</v-list-title>
-                        </v-list>
+                          </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title>{{username}}</v-list-item-title></v-list-item-content>
+                        <v-list-item-action>
+                          <v-btn icon>
+                            <v-icon color="grey lighten-1">mdi-information</v-icon>
+                          </v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
                       <v-list two-line subheader>
-                        <v-subheader inset>teams</v-subheader>
+                        <v-subheader inset>friends</v-subheader>
 
-                        <v-list-tile
-                          v-for="team in teams"
-                          :key="team.title"
-                          @click=""
+                        <v-list-item
+                          v-for="friend in friends"
+                          @click="to_info(friend)"
                         >
-                          <v-list-tile-avatar>
-                            <v-icon >folder</v-icon>
-                          </v-list-tile-avatar>
+                          <v-list-item-avatar color="indigo" size="32">
+                            <span class="white--text headline">{{friend[0]}}</span>
+                          </v-list-item-avatar>
+                          <v-list-item-content>
+                            <v-list-item-title v-text="friend"></v-list-item-title>
+                          </v-list-item-content>
 
-                          <v-list-tile-content>
-                            <v-list-tile-title v-text="team.title"></v-list-tile-title>
-                            <v-list-tile-subtitle v-text="team.subtitle"></v-list-tile-subtitle>
-                          </v-list-tile-content>
-
-                          <v-list-tile-action>
+                          <v-list-item-action>
                             <v-btn icon>
                               <v-icon color="grey lighten-1">mdi-information</v-icon>
                             </v-btn>
-                          </v-list-tile-action>
-                        </v-list-tile>
+                          </v-list-item-action>
+                        </v-list-item>
                       </v-list>
                       <v-divider></v-divider>
+                      <div style="padding: 10px">
+                        <v-btn
+                                color="success"
+                                @click="to_recommendation"
+                        >
+                          get recommendation
+                        </v-btn>
+
+                      </div>
                     </v-navigation-drawer>
                   </v-card>
                 </v-flex>
 
                 <v-flex md8>
-                  <v-card height = "500" ></v-card>
+                  <v-card height = "800" >
+                    <v-card-title>
+                      Activities
+                    </v-card-title>
+                    <v-card-text>
+                      No activity available.
+
+                    </v-card-text>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -81,22 +100,23 @@
   import nav_header from "../components/new_header"
   import nav_footer from "../components/new_footer"
   import nav_breadcrumb from "../components/new_breadcrumb"
+  import Cookies from 'js-cookie'
+  import axios from 'axios'
+
 
 
   export default {
-        name: "main",
+        name: "main_page",
       data(){
           return{
             breadcrumbItems:[{
               text:"Home",
               disable:true,
-              href:"/"
+              href:"/main_page"
             }],
-            teams:[
-            { title: 'GTA5', subtitle: 'Jan 9, 2014' },
-            { title: 'wow', subtitle: 'Jan 17, 2014' },
-            { title: 'cs', subtitle: 'Jan 28, 2014' },
-          ]
+              username:"",
+            friends:[],
+
           }
       },
         components:{
@@ -104,7 +124,41 @@
         nav_footer,
         nav_breadcrumb
       },
+      mounted:function () {
+          this.username = this.$route.params.username;
+          if(!this.username){
+              this.username = Cookies.get("username");
+          }
+          this.get_friends()
+      },
+      methods:{
+            get_friends(){
+                axios.get("api/get_friend_list", {
+                    params:{
+                        username:this.username
+                    }
+                }).then((res)=>{
+                    this.friends = res.data.result.friends;
+                })
+            },
+          to_recommendation() {
+              this.$router.push({
+                  name:"recommendation",
+                  params:{
+                      username: this.username,
+                  }
+              });
+      },
+          to_info(name){
+              this.$router.push({
+                  name:"user_info",
+                  params:{
+                      username: name,
+                  }
+              });
+          }
     }
+  }
 </script>
 
 <style scoped>

@@ -195,6 +195,9 @@
             }).then((res)=>{
               if(res.data.status==="200"){
                 alert("success register!");
+                  this.$router.push({
+                      name:"login",
+                  });
               }else{
                 this.errorTip=res.data.message;
                 this.tipShow=true;
@@ -209,13 +212,15 @@
               this.gamePlatforms.splice(index, 1);
           },
           addPlatform(){
-              this.gamePlatforms.push(this.platforms.indexOf(this.selectedPlatform));
+            if(this.gamePlatforms.indexOf(this.selectedPlatform)===-1)
+                this.gamePlatforms.push(this.platforms.indexOf(this.selectedPlatform));
           },
         closeGameChip(index){
           this.playingGames.splice(index, 1);
         },
         addGame(){
-          this.playingGames.push(this.games.indexOf(this.selectedGame));
+            if(this.playingGames.indexOf(this.selectedGame)===-1)
+              this.playingGames.push(this.games.indexOf(this.selectedGame));
         },
         changeRate(data){
             this.gameTypes[data["typeIndex"]] = data["starNum"];

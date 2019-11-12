@@ -5,6 +5,7 @@ import login from '../views/login'
 import main from '../views/main_page'
 import user_info from '../views/user_info'
 import recommendation from '../views/recommendation'
+import messages from '../views/messages'
 
 Vue.use(Router)
 
@@ -17,7 +18,7 @@ export default new Router({
     },
     {
       path: '/',
-      name:'main',
+      name:'main_page',
       component: main
     },
     {
@@ -34,6 +35,11 @@ export default new Router({
           path:'/recommendation',
           name:"recommendation",
           component: recommendation
+      },
+      {
+          path:'/messages',
+          name:"messages",
+          component: messages
       },
 
   ]

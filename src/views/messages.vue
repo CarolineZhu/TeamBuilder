@@ -20,29 +20,28 @@
                                             <v-toolbar flat >
                                                 <p>Invitations:</p>
                                             </v-toolbar>
-                                            <v-list v-for="(item, index) in invitations" three-line style="padding: 0px;" >
+                                            <v-divider></v-divider>
+                                            <p v-show="invitations.length===0">No invitations</p>
+                                            <v-list v-for="(item, index) in invitations" two-line style="padding: 0px;" >
                                                 <v-list-item >
                                                     <v-layout align-center justify-center row fill-height >
-                                                        <v-flex xs1 >
-                                                            {{index+1}}
-                                                        </v-flex>
-                                                        <v-flex v-bind:class="{'xs2':!is_small, 'xs6':is_small}" >
+                                                        <v-flex xs2 >
                                                             <div style="padding-left:10px">
                                                                 <v-avatar color="indigo" size="26">
-                                                                    <span class="white--text headline">{{item["username"][0]}}</span>
+                                                                    <span class="white--text headline">{{item[0]}}</span>
                                                                 </v-avatar>
                                                             </div>
                                                         </v-flex>
-                                                        <v-flex v-bind:class="{'xs4':!is_small, 'xs6':is_small}">
-                                                            <a>{{item["username"]}}</a>
+                                                        <v-flex xs2>
+                                                            <a>{{item}}</a>
                                                         </v-flex>
-                                                        <v-flex xs2 v-show="!is_small">
-                                                            <v-list-item-title style="display: inline">rate: 5</v-list-item-title>
+                                                        <v-flex xs4>
+                                                            <div> wants to play with you!</div>
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-btn
                                                                     color="red"
-                                                                    @click="deny"
+                                                                    @click="deny(index)"
                                                             >
                                                                 Deny
                                                             </v-btn>
@@ -50,7 +49,7 @@
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-btn
                                                                     color="success"
-                                                                    @click="accept"
+                                                                    @click="accept(index)"
                                                             >
                                                                 Accept
                                                             </v-btn>
@@ -107,7 +106,7 @@
                 breadcrumbItems:[{
                     text:"Home",
                     disable:true,
-                    href:"/"
+                    href:"main_page"
                 }],
                 username:"",
                 invitations:[],
@@ -126,24 +125,48 @@
         },
         mounted: function () {
             this.username = this.$route.params.username;
-            this.get_recommendation();
+            if(!this.username){
+                this.username = Cookies.get("username");
+            }
+            this.get_invitations();
 
         },
         methods:{
             get_invitations() {
-                axios.get("/api/get_recommendation", {
+                axios.get("/api/show_invitation_list", {
                     params: {
                         username: this.username
                     }
                 }).then((res)=>{
-                    this.recommendationList=res.data.result.recommendationList;
+                    this.invitations=res.data.result.invitations;
+                }, (err)=>{
+                    alert(err)
                 })
             },
-            accept(){
+            accept(index){
+                axios.post("/api/accept_invitation",{
+                    username: this.username,
+                    player:this.invitations[index]
+                }).then((res)=>{
+                    alert("successfully add friend.");
+                    this.invitations.splice(index, 1);
+                    this.$refs.header.change_message_num(-1);
+                }, (err)=>{
+                    alert(err)
+                })
 
             },
-            deny(){
+            deny(index){
+                axios.post("/api/deny_invitation",{
+                    username: this.username,
+                    player:this.invitations[index]
+                }).then((res)=>{
+                    this.invitations.splice(index, 1);
+                    this.$refs.header.change_message_num(-1);
 
+                }, (err)=>{
+                    alert(err)
+                })
             }
         }
 

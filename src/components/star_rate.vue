@@ -6,7 +6,6 @@
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -38,7 +37,7 @@
                         active: false
                     }
                 ],
-                starNum: 0,
+                starNum: 1,
             }
         },
         methods: {

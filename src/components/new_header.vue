@@ -4,55 +4,22 @@
     <v-toolbar-title>teamBuilder</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items>
-      <v-btn text @click="open_modal('register')" v-show="!loginFlag">Register</v-btn>
-      <v-btn text @click="open_modal('login')" v-show="!loginFlag">Login</v-btn>
-      <v-menu>
-      <v-btn text @click="" v-show="loginFlag">{{username}}  <v-icon
-        small
-        color="white lighten-1"
-      >
-        keyboard_arrow_down
-      </v-icon></v-btn>
-        <v-list>
-          <v-list-tile
-            check
-            @click="to_orders"
-          >
-            <v-list-tile-title>your orders</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            check
-            @click="to_address"
-          >
-            <v-list-tile-title check @click="">your address</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            check
-            @click=""
-          >
-            <v-list-tile-title check @click="">your payments</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            check
-            @click="logout"
-          >
-            <v-list-tile-title @click="logout" check>logout</v-list-tile-title>
-          </v-list-tile>
-        </v-list></v-menu>
-      <v-btn text @click="to_cart_list">
-        <v-badge right color="red" v-show="cartNum!==0">
-          <span slot="badge">{{this.cartNum}}</span>
+      <v-btn flat @click="logout" v-show="loginFlag" dark>Logout</v-btn>
+      <v-btn text @click="to_messages">
+        <v-badge right color="red" v-show="messageNum !== 0">
+          <span slot="badge">{{messageNum}}</span>
           <v-icon
-            medium
-            color="white lighten-1"
-          >
-            email
-          </v-icon>
+                medium
+                color="white lighten-1"
+        >
+          email
+        </v-icon>
         </v-badge>
+
         <v-icon
-          medium
-          color="white lighten-1"
-          v-show="true"
+                medium
+                color="white lighten-1"
+                v-show="messageNum===0"
         >
           email
         </v-icon>
@@ -72,25 +39,6 @@
       props:["sideShow"],
       data(){
           return {
-            nameRules:[
-              v => !!v || 'Name is required',
-              v => (v && v.length <= 15) || 'Name must be less than 15 characters'
-            ],
-            passwordRules:[
-              v => !!v || 'Password is required',
-            ],
-            rpasswordRules:[
-              v => !!v || 'Password is required',
-              v => v === this.password || 'Password is not consistant'
-            ],
-            emailRules:[
-              value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        }
-            ],
-            loginmdShow:false,
-            registermdShow:false,
             tipShow:false,
             userid:"",
             username:"",
@@ -98,11 +46,14 @@
             rpassword:"",
             loginFlag:false,
             email:"",
-            cartNum:0,
+              messageNum:0,
             errorTip:"username or password wrong.",
-            id:"",}
+            id:"",
+
+          }
       },
-      mounted: function(){
+      mounted:
+          function(){
         this.check_login();
       },
     components:{
@@ -110,128 +61,30 @@
     }
     ,
       methods:{
-        open_modal(modal){
-          this.errorTip="";
-          this.tipShow=false;
-          if(modal==="login"){
-            this.loginmdShow=true;
-          }
-          if(modal==="register"){
-            this.registermdShow=true;
-          }
-        },
-        close_modal(modal){
-          this.errorTip="";
-          this.tipShow=false;
-          if(modal==="login"){
-            this.loginmdShow=false;
-            this.username="";
-            this.password="";
-          }
-
-          if(modal==="register"){
-            this.registermdShow=false;
-            this.username="";
-            this.password="";
-            this.email="";
-          }
-        },
-        login(){
-          if(this.username==="" || this.password===""){
-            this.errorTip="username or password cannot be empty!";
-            this.tipShow=true;
-          }else{
-            axios.post("/api/login", {
-              username: this.username,
-              password: this.password
-            }).then((res)=>{
-              if(res.data.status==="200"){
-                this.userid=res.data.result.userid;
-                this.password="";
-                this.loginFlag=true;
-                this.cartNum=res.data.result.cartNum;
-                Cookies.set("cartNum", this.cartNum);
-                this.close_modal('login');
-                this.username=res.data.result.username;
-
-              }else{
-                this.errorTip=res.data.message;
-                this.tipShow=true;
-              }
-            },(error)=>{
-              alert("cannot connect to server.");
-            })
-          }
-
-        },
         logout(){
           Cookies.remove('username');
           Cookies.remove('userid');
-          Cookies.remove('cartNum');
-          this.cartNum=0;
+          Cookies.remove('messageNum');
           this.$router.push(
-            '/'
+            '/login'
           );
           this.loginFlag=false;
         },
-
         check_login(){
-          console.log("asdad");
           this.id=Cookies.get('userid');
           if(this.id){
             this.loginFlag=true;
             this.username=Cookies.get('username');
-            this.cartNum=parseInt(Cookies.get('cartNum'));
+            this.messageNum = parseInt(sessionStorage.getItem("messageNum"));
           }
         },
-        register(){
-          if(this.username==="" || this.password===""||this.rpassword===""||this.email===""){
-            this.errorTip="username or password cannot be empty!";
-            this.tipShow=true;
-            return;
+        to_messages(){
+            this.$router.push('/messages');
+        },
+          change_message_num(num){
+            this.messageNum+=num;
+              sessionStorage.setItem("messageNum", this.messageNum)
           }
-          if(this.password !== this.rpassword){
-            this.errorTip="two passwords inconsistant!";
-            this.tipShow=true;
-          }else{
-            axios.post("/api/register", {
-              username: this.username,
-              password: this.password,
-              email: this.email
-            }).then((res)=>{
-              if(res.data.status==="200"){
-                alert("success register!");
-                this.close_modal('register');
-              }else{
-                this.errorTip=res.data.message;
-                this.tipShow=true;
-              }
-            },(error)=>{
-              alert("cannot connect to server.");
-            })
-          }
-        },
-        to_cart_list(){
-          if(this.loginFlag){
-            this.$router.push('/cart');
-          }else{
-            alert("login first!");
-          }
-        },
-        change_cart_num(num){
-          this.cartNum+=num;
-          Cookies.set("cartNum", this.cartNum);
-        },
-        to_address(){
-            this.$router.push('/address');
-        },
-        to_orders(){
-          this.$router.push('/orders');
-        },
-        show_filter(){
-          this.$emit("show_filter");
-        }
-
       }
     }
 </script>

@@ -38,8 +38,16 @@
                         <v-btn
                           color="success"
                           @click="login"
+                          style="width: 100px"
                         >
                           Login
+                        </v-btn>
+                        <v-btn
+                                color="red"
+                                @click="to_register"
+                                style="width: 100px"
+                        >
+                          Register
                         </v-btn>
                       </v-flex>
                     </v-layout>
@@ -126,7 +134,10 @@
               this.userid=res.data.result.userid;
               this.loginFlag=true;
               this.username=res.data.result.username;
-              this.to_info()
+              console.log(res.data.result.friends);
+                sessionStorage.setItem("friends", JSON.stringify(res.data.result.friends));
+                sessionStorage.setItem("messageNum", res.data.result.messageNum);
+                this.to_main()
             }else{
               this.errorTip=res.data.message;
                 this.tipShow=true;
@@ -137,12 +148,17 @@
           })
         }
       },
-        to_info(){
+        to_main(){
             this.$router.push({
-                name:"user_info",
+                name:"main_page",
                 params:{
                     username: this.username,
                 }
+            });
+        },
+        to_register(){
+            this.$router.push({
+                name:"register",
             });
         }
     }

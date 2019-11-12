@@ -29,18 +29,6 @@
                                         <p>playing time: {{playingTime}}</p>
 
                                     </div>
-                                    <div slot="btns">
-                                        <v-layout row wrap style="text-align: center">
-                                            <v-flex xs12>
-                                                <v-btn
-                                                        color="success"
-                                                        @click="to_recommendation"
-                                                >
-                                                    Get Recommendation
-                                                </v-btn>
-                                            </v-flex>
-                                        </v-layout>
-                                    </div>
                                 </my_form>
                             </v-card>
                         </v-content></v-flex>
@@ -117,14 +105,6 @@
                     }
                 })
             },
-            to_recommendation() {
-                this.$router.push({
-                    name:"recommendation",
-                    params:{
-                        username: this.username,
-                    }
-                });
-            }
         }
     }
 </script>

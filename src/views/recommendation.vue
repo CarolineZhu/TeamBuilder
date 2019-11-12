@@ -128,6 +128,9 @@
         },
         mounted: function () {
             this.username = this.$route.params.username;
+            if(!this.username){
+                this.username = Cookies.get("username");
+            }
             this.get_recommendation();
 
         },
@@ -141,11 +144,18 @@
                     this.recommendationList=res.data.result.recommendationList;
                 })
             },
+            expand(index){
+                this.shows[index] = !this.shows[index];
+                this.shows.push(false);
+                this.shows.pop();
+            },
             invite(index){
                 axios.post("/api/send_invitation", {
                     username: this.username,
                     player:this.recommendationList[index][1]["username"]
                 }).then((res)=>{
+                    alert("sent invitation to player.");
+                    this.recommendationList.splice(index,1);
                     console.log(res);
                 })
             }
