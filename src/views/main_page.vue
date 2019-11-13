@@ -129,6 +129,7 @@
           if(!this.username){
               this.username = Cookies.get("username");
           }
+          if(!this.username)this.$router.push({name:"login",});
           this.get_friends()
       },
       methods:{
