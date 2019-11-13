@@ -155,7 +155,7 @@ router.get("/get_recommendation",  (req, res, next) => {
 });
 
 router.get("/get_friend_list",  (req, res, next) => {
-    console.log("API Called: Show invitation list...")
+    console.log("API Called: Get friend list...")
     var username=req.query.username;
     Users.findOne({
         username:username,

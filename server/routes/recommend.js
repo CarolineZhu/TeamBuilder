@@ -18,7 +18,7 @@ function recommend(Users, player, k, res) {
             if(doc) {
                 var distList = [];
                 for(var i = 0; i < doc.length; i++) {
-                    if(doc[i].username !== player.username){
+                    if(doc[i].username !== player.username && !doc[i].invitations.includes(player.username)){
                         distList.push(distance(player, doc[i]));
                     }
                 }
