@@ -331,7 +331,7 @@ router.post("/delete_friend", (req, res, next)=>{
                                     doc2.save();
                                 }
                             }
-                        });
+                        }
                     }
             res.json({
                 status:'200',
@@ -339,13 +339,11 @@ router.post("/delete_friend", (req, res, next)=>{
                 result:{
                 }
             });
-                }
+                });
             }
-            });
         }
-        }
+        });
     });
-});
 
 
 router.post("/rate_friends", (req, res, next)=>{
@@ -369,7 +367,7 @@ router.post("/rate_friends", (req, res, next)=>{
                 }
                 doc.comments.push({
                    commentator : username,
-                   rate : rating;
+                   rate : rating
                 });
             }
             res.json({
@@ -382,7 +380,7 @@ router.post("/rate_friends", (req, res, next)=>{
     });
 });
 
-route.get("/get_rating", (req, res, next)=>{
+router.get("/get_rating", (req, res, next)=>{
     var username=req.query.username;
     Users.findOne({
         username:username,

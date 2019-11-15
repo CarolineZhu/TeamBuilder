@@ -140,7 +140,8 @@
                 }],
                 starNum:2,
                 selectedStarNum:-1,
-                deleteDialog:false
+                deleteDialog:false,
+                rated:false
             }
         },
         mounted:
@@ -184,10 +185,22 @@
             },
             deleteFriend(){
                 this.deleteDialog = false;
+                axios.post("/api/delete_friend",{
+                    username: this.viewerName,
+                    player: this.username}).then((res)=>{
+                    alert("Delete Friend Successfully");
+                })
 
             },
             rateFriend(){
-
+                axios.post("/api/rate_friend",{
+                    username: this.viewerName,
+                    player: this.username,
+                    rating: this.selectedStarNum
+                }).then((res)=>{
+                    alert("Rate Friend Successfully");
+                    this.rated = true;
+                })
             }
         }
     }
