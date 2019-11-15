@@ -302,5 +302,110 @@ router.post("/accept_invitation",  (req, res, next) => {
 
 });
 
+router.post("/delete_friend", (req, res, next)=>{
+    var username=req.body.username;
+    var player=req.body.player;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when delete friends.");
+        }else{
+            if (doc) {
+                for( var i = 0; i < doc.friends.length; i++) {
+                    if (doc.friends[i] === player) {
+                        doc.friends.splice(i, 1);
+                        doc.save();
+                    }
+                }
+                Users.findOne({
+                    username:player,
+                }, (err, doc2)=> {
+                    if (err) {
+                        on_err(req, res, err, "error when finding orders.");
+                    }else{
+                        if (doc2) {
+                            for( var i = 0; i < doc2.friends.length; i++) {
+                                if (doc2.friends[i] === username) {
+                                    doc2.friends.splice(i, 1);
+                                    doc2.save();
+                                }
+                            }
+                        });
+                    }
+            res.json({
+                status:'200',
+                message:"",
+                result:{
+                }
+            });
+                }
+            }
+            });
+        }
+        }
+    });
+});
+
+
+router.post("/rate_friends", (req, res, next)=>{
+    var username=req.body.username;
+    var player=req.body.player;
+    var rating = req.body.rating;
+    Users.findOne({
+        username:player,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when rate friends.");
+        }else{
+            if (doc) {
+                if (!doc.friends.includes(username)) {
+                    on_err(req, res, err, "Not in friends list.");
+                }
+                for (var i = 0; i < doc.comments.length; i++) {
+                    if (doc.comments[i].commentator == username) {
+                        on_err(req, res, err, "Already rated.");
+                    }
+                }
+                doc.comments.push({
+                   commentator : username,
+                   rate : rating;
+                });
+            }
+            res.json({
+                status:'200',
+                message:"",
+                result:{
+                }
+            });
+        }
+    });
+});
+
+route.get("/get_rating", (req, res, next)=>{
+    var username=req.query.username;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when getting ratings.");
+        }else{
+            if (doc) {
+                var sum = 0;
+                for (var i = 0; i < doc.comments.length; i++) {
+                    sum += doc.comments[i].rate;
+                }
+                var avg = sum / doc.comments.length;
+                res.json({
+                    status: '200',
+                    message: "",
+                    result: {
+                        rate: avg,
+                    }
+                });
+            }
+        }
+    });
+});
 
 module.exports = router;
