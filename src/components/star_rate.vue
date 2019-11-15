@@ -18,8 +18,8 @@
         data(){
             return{
                 stars: [{
-                    src: starOff,
-                    active: false
+                    src: starOn,
+                    active: true
                 }, {
                     src: starOff,
                     active: false
@@ -43,19 +43,13 @@
                 var total = this.stars.length;
                 var idx = index + 1;
 
-                if(this.starNum === 0) {
+                if(this.starNum === 1) {
                     this.starNum = idx;
                     for(var i = 0; i < idx; i++) {
                         this.stars[i].src = starOn;
                         this.stars[i].active = true;
                     }
                 } else {
-                    if(idx === this.starNum) {
-                        for(var i = index; i < total; i++) {
-                            this.stars[i].src = starOff;
-                            this.stars[i].active = false;
-                        }
-                    }
                     if(idx < this.starNum) {
                         for(var i = idx; i < this.starNum; i++) {
                             this.stars[i].src = starOff;

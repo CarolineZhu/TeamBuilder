@@ -37,7 +37,11 @@
                                                             <a>{{item[1]["username"]}}</a>
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
-                                                            <v-list-item-title style="display: inline">rate: 5</v-list-item-title>
+                                                            <v-list-item-title style="display: inline">
+                                                                <star_rate_fixed :starNum="item[1]['rating']" v-show="item[1]['rating']!==0">
+                                                                </star_rate_fixed>
+                                                                <p v-show="item[1]['rating']===0">No rate</p>
+                                                            </v-list-item-title>
                                                         </v-flex>
                                                         <v-flex xs1 v-show="!is_small">
                                                             <v-btn
@@ -99,6 +103,7 @@
     import Cookies from 'js-cookie'
     import nav_breadcrumb from "../components/new_breadcrumb"
     import axios from 'axios'
+    import star_rate_fixed from "../components/star_rate_fixed"
     import {data} from "../js/data"
 
 
@@ -124,7 +129,8 @@
         components:{
             nav_header,
             nav_footer,
-            nav_breadcrumb
+            nav_breadcrumb,
+            star_rate_fixed
         },
         mounted: function () {
             this.username = this.$route.params.username;

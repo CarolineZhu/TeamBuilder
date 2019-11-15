@@ -27,14 +27,19 @@
                                             {{games[i]}}
                                         </v-chip>
                                         <p style="padding: 10px">playing time: {{playingTime}}</p>
-                                        <p style="padding: 10px">rate:</p>
-                                        <star_rate_fixed :starNum="starNum"></star_rate_fixed>
-                                        <div v-show="username!==viewerName">
+                                        <div v-show="rating!==0">
+                                            <p style="padding: 10px">rate:</p>
+                                            <star_rate_fixed :starNum="rating"></star_rate_fixed>
+                                        </div>
+                                        <div v-show="rating===0">
+                                            No rating for this user yet.
+                                        </div>
+                                        <div v-show="username!==viewerName && !rated">
                                         <p style="padding: 10px">Would you like to rate your friend?</p>
                                         <star_rate :typeIndex="0" @changeRate="changeRate"></star_rate>
                                         <v-btn
                                                 color="success"
-                                                @click="deleteFriend"
+                                                @click="rateFriend"
                                                 style="margin-top: 10px"
                                                 v-show="selectedStarNum>=0"
                                         >
@@ -138,10 +143,11 @@
                     disable:true,
                     href:"/"
                 }],
-                starNum:2,
                 selectedStarNum:-1,
                 deleteDialog:false,
-                rated:false
+                rated:false,
+                rating:0,
+                comments:[]
             }
         },
         mounted:
@@ -165,8 +171,11 @@
                         username: this.username
                     }
                 }).then((res)=>{
+                    console.log(res.data.result);
                     this.gamePlatforms= res.data.result.platform;
                     this.playingGames = res.data.result.playingGames;
+                    this.rating = res.data.result.rating?res.data.result.rating:0;
+                    this.comments = res.data.result.comments;
                     switch(res.data.result.playingTime)
                     {
                         case 0:
@@ -177,6 +186,11 @@
                             this.playingTime = "Evening";
                         case 3:
                             this.playingTime = "Weekends";
+                    }
+                    for(var i =0; i< this.comments.length;i++){
+                        if(this.comments[i]['commentator']===this.viewerName){
+                            this.rated=true;
+                        }
                     }
                 })
             },
@@ -190,16 +204,18 @@
                     player: this.username}).then((res)=>{
                     alert("Delete Friend Successfully");
                 })
-
             },
             rateFriend(){
-                axios.post("/api/rate_friend",{
+                axios.post("/api/rate_friends",{
                     username: this.viewerName,
                     player: this.username,
                     rating: this.selectedStarNum
                 }).then((res)=>{
+                    if(res.data.status==="200"){
                     alert("Rate Friend Successfully");
-                    this.rated = true;
+                    this.rated = true;}else{
+                        alert(res.data.message)
+                    }
                 })
             }
         }

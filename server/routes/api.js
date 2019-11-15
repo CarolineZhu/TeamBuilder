@@ -129,7 +129,9 @@ router.get("/get_user_info",  (req, res, next) => {
                         playingGames: doc.playingGames,
                         favoriteGameType: doc.favoriteGameType,
                         playingTime: doc.playingTime,
-                        platform: doc.platform
+                        platform: doc.platform,
+                        rating:doc.rating,
+                        comments:doc.comments
                     }
                 });
             }
@@ -359,10 +361,12 @@ router.post("/rate_friends", (req, res, next)=>{
             if (doc) {
                 if (!doc.friends.includes(username)) {
                     on_err(req, res, err, "Not in friends list.");
+                    return
                 }
                 for (var i = 0; i < doc.comments.length; i++) {
                     if (doc.comments[i].commentator == username) {
                         on_err(req, res, err, "Already rated.");
+                        return
                     }
                 }
                 doc.rating = (doc.rating * doc.comments.length + rating) / (doc.comments.length + 1);
