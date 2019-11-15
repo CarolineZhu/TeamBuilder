@@ -14,6 +14,10 @@ var userSchema=new Schema({
     comments:[{
         commentator:String,
         rate:Number
-    }]
+    }],
+    rating:{
+        type:Number,
+        default:0
+    }
 });
 module.exports = mongoose.model("user", userSchema);

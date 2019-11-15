@@ -365,10 +365,12 @@ router.post("/rate_friends", (req, res, next)=>{
                         on_err(req, res, err, "Already rated.");
                     }
                 }
+                doc.rating = (doc.rating * doc.comments.length + rating) / (doc.comments.length + 1);
                 doc.comments.push({
                    commentator : username,
                    rate : rating
                 });
+                doc.save();
             }
             res.json({
                 status:'200',
@@ -380,30 +382,5 @@ router.post("/rate_friends", (req, res, next)=>{
     });
 });
 
-router.get("/get_rating", (req, res, next)=>{
-    var username=req.query.username;
-    Users.findOne({
-        username:username,
-    }, (err, doc)=> {
-        if (err) {
-            on_err(req, res, err, "error when getting ratings.");
-        }else{
-            if (doc) {
-                var sum = 0;
-                for (var i = 0; i < doc.comments.length; i++) {
-                    sum += doc.comments[i].rate;
-                }
-                var avg = sum / doc.comments.length;
-                res.json({
-                    status: '200',
-                    message: "",
-                    result: {
-                        rate: avg,
-                    }
-                });
-            }
-        }
-    });
-});
 
 module.exports = router;
