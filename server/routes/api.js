@@ -333,19 +333,19 @@ router.post("/delete_friend", (req, res, next)=>{
                                     doc2.save();
                                 }
                             }
-                        }
+                        };
                     }
-            res.json({
-                status:'200',
-                message:"",
-                result:{
-                }
-            });
+                    res.json({
+                        status:'200',
+                        message:"",
+                        result:{
+                        }
+                    });
                 });
             }
         }
-        });
     });
+});
 
 
 router.post("/rate_friends", (req, res, next)=>{

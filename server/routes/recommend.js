@@ -7,6 +7,10 @@ function distance(player1, player2) {
     return [dist, player2]
 }
 
+function score(player) {
+    var 
+}
+
 function recommend(Users, player, k, res) {
     var platformList = player.platform;
     var gameList = player.playingGames;
@@ -16,21 +20,23 @@ function recommend(Users, player, k, res) {
             on_err(req, res, err, "error when finding orders.");
         }else{
             if(doc) {
-                var distList = [];
+                var recommendationList = [];
                 for(var i = 0; i < doc.length; i++) {
                     if(doc[i].username !== player.username && !doc[i].invitations.includes(player.username)){
-                        distList.push(distance(player, doc[i]));
+                        var current = distance(player, doc[i]);
+                        var rating = doc[i].rating == 0 ? 5 : doc[i].rating;
+                        current[0] /= rating;
+                        recommendationList.push(current);
                     }
                 }
-                distList.sort(function (a, b) {
+                recommendationList.sort(function (a, b) {
                     return (a[0] - b[0])
                 });
-                var recommendationList = distList.slice(0, k);
                 res.json({
                         status: '200',
                         message: "Recomendation returned: ",
                         result: {
-                            recommendationList: recommendationList
+                            recommendationList: recommendationList.slice(0, k)
                         }
 
                 });
