@@ -386,5 +386,49 @@ router.post("/rate_friends", (req, res, next)=>{
     });
 });
 
+router.post("/block_and_delete_friends", (req, res, next)=>{
+    var username=req.body.username;
+    var player=req.body.player;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when delete friends.");
+        }else{
+            if (doc) {
+                doc.blocked.push(player);
+                for( var i = 0; i < doc.friends.length; i++) {
+                    if (doc.friends[i] === player) {
+                        doc.friends.splice(i, 1);
+                        doc.save();
+                    }
+                }
+                Users.findOne({
+                    username:player,
+                }, (err, doc2)=> {
+                    if (err) {
+                        on_err(req, res, err, "error when finding orders.");
+                    }else{
+                        if (doc2) {
+                            doc2.blocked.push(username);
+                            for( var i = 0; i < doc2.friends.length; i++) {
+                                if (doc2.friends[i] === username) {
+                                    doc2.friends.splice(i, 1);
+                                    doc2.save();
+                                }
+                            }
+                        };
+                    }
+                    res.json({
+                        status:'200',
+                        message:"",
+                        result:{
+                        }
+                    });
+                });
+            }
+        }
+    });
+});    
 
 module.exports = router;

@@ -18,6 +18,7 @@ var userSchema=new Schema({
     rating:{
         type:Number,
         default:0
-    }
+    },
+    blocked:[String]
 });
 module.exports = mongoose.model("user", userSchema);
