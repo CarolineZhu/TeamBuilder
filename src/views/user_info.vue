@@ -80,20 +80,37 @@
 
                                                     <v-card-actions>
                                                         <v-spacer></v-spacer>
+                                                        <v-layout row wrap>
+                                                        <v-flex xs12>
                                                         <v-btn
                                                                 color="primary"
                                                                 text
                                                                 @click="deleteFriend"
+                                                                width="500"
                                                         >
                                                            yes
                                                         </v-btn>
+                                                        </v-flex>
+                                                        <v-flex xs12>
                                                         <v-btn
                                                                 color="primary"
                                                                 text
-                                                                @click="dialog = false"
+                                                                @click="block"
+                                                                width="500"
+                                                        >
+                                                            yes and block this user
+                                                        </v-btn>
+
+                                                        </v-flex>
+                                                        <v-flex xs12>
+                                                        <v-btn
+                                                                color="primary"
+                                                                text
+                                                                @click="deleteDialog= false"
+                                                                width="500"
                                                         >
                                                             No
-                                                        </v-btn>
+                                                        </v-btn></v-flex></v-layout>
                                                     </v-card-actions>
                                                 </v-card>
                                             </v-dialog>
@@ -217,6 +234,15 @@
                         alert(res.data.message)
                     }
                 })
+            },
+            block(){
+                this.deleteDialog = false;
+                axios.post("/api/block_and_delete_friends",{
+                    username: this.viewerName,
+                    player: this.username}).then((res)=>{
+                    alert("Block Friend Successfully");
+                })
+
             }
         }
     }
