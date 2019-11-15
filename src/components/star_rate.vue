@@ -17,8 +17,6 @@
         props: ["typeIndex"],
         data(){
             return{
-                starOffImg: "../assets/starOff.png",
-                starOnImg : "../assets/starOn.png",
                 stars: [{
                     src: starOff,
                     active: false

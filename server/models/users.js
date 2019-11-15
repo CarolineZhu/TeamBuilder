@@ -10,6 +10,10 @@ var userSchema=new Schema({
     platform:[Number],
     team:[Number],
     invitations:[String],
-    friends:[String]
+    friends:[String],
+    comments:[{
+        commentator:String,
+        rate:Number
+    }]
 });
 module.exports = mongoose.model("user", userSchema);

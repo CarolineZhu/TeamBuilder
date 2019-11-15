@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="height: 450px">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
-    <v-app id="inspire" style="height: 450px">
+    <v-app id="inspire" style="height: 800px">
       <v-container grid-list-md style="margin:0px">
         <v-layout row wrap>
           <v-flex xs12 >

@@ -23,7 +23,7 @@
                       permanent
                       style="width: 400px"
                     >
-                      <v-list-item>
+                      <v-list-item @click="to_info(username)">
                           <v-list-item-avatar>
                             <img src="https://randomuser.me/api/portraits/women/81.jpg">
                           </v-list-item-avatar>
@@ -155,6 +155,7 @@
                   name:"user_info",
                   params:{
                       username: name,
+                      viewerName: this.username
                   }
               });
           }
