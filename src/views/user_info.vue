@@ -220,7 +220,14 @@
                     username: this.viewerName,
                     player: this.username}).then((res)=>{
                     alert("Delete Friend Successfully");
-                })
+
+                    this.$router.push({
+                        name:"main_page",
+                        params:{
+                            username: this.viewerName,
+                        }});
+                });
+
             },
             rateFriend(){
                 axios.post("/api/rate_friends",{
@@ -241,6 +248,11 @@
                     username: this.viewerName,
                     player: this.username}).then((res)=>{
                     alert("Block Friend Successfully");
+                    this.$router.push({
+                        name:"main_page",
+                        params:{
+                            username: this.viewerName,
+                        }});
                 })
 
             }
