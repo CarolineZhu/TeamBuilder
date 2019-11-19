@@ -21,12 +21,16 @@ function recommend(Users, player, k, res) {
                     if(doc[i].username !== player.username && !doc[i].invitations.includes(player.username)){
                         var current = distance(player, doc[i]);
                         var rating = doc[i].rating == 0 ? 5 : doc[i].rating;
-                        current[0] /= rating;
+
+                        var dist = 1 - current[0] / 128;
+                        rating /= 5;
+
+                        current[0] = dist * 0.9 + rating * 0.1;
                         recommendationList.push(current);
                     }
                 }
                 recommendationList.sort(function (a, b) {
-                    return (a[0] - b[0])
+                    return (b[0] - a[0]);
                 });
                 res.json({
                         status: '200',
