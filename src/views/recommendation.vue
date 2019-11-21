@@ -38,8 +38,15 @@
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-list-item-title style="display: inline">
-                                                                <star_rate_fixed :starNum="item[1]['rating']" v-show="item[1]['rating']!==0">
-                                                                </star_rate_fixed>
+                                                                <v-rating
+                                                                        v-show = "item[1]['rating']!=0"
+                                                                        v-model="item[1]['rating']"
+                                                                        color="yellow darken-3"
+                                                                        background-color="grey darken-1"
+                                                                        empty-icon="$ratingFull"
+                                                                        half-increments
+                                                                        readonly="true"
+                                                                ></v-rating>
                                                                 <p v-show="item[1]['rating']===0">No rate</p>
                                                             </v-list-item-title>
                                                         </v-flex>
@@ -54,11 +61,19 @@
                                                         </v-flex>
                                                         <v-flex xs2 v-show="!is_small">
                                                             <v-btn
-                                                                    color="success"
+                                                                    color="primary"
                                                                     @click="invite(index)"
                                                             >
                                                                 Invite
                                                             </v-btn>
+                                                        </v-flex>
+
+                                                        <v-flex xs10>
+                                                            <v-progress-linear color="green"
+                                                                               value="15"></v-progress-linear>
+                                                        </v-flex>
+                                                        <v-flex xs2>
+                                                            15% match
                                                         </v-flex>
                                                     <v-flex xs12>
                                                     <v-expand-transition>
@@ -68,10 +83,10 @@
                                                             <v-card-text>
                                                                 <div align="left">
                                                                     Games:
-                                                                    <v-chip v-for='i in item[1].playingGames'>
+                                                                    <v-chip v-for='i in item[1].playingGames' v-bind:color="isMatched(i)">
                                                                         {{games[i]}}
                                                                     </v-chip>
-                                                                    <p>Time: {{times[item[1]["playingTime"]]}}</p>
+                                                                    <p>Time: <v-chip color="green">{{times[item[1]["playingTime"]]}}</v-chip></p>
                                                                 </div>
 
                                                             </v-card-text>
@@ -104,6 +119,7 @@
     import nav_breadcrumb from "../components/new_breadcrumb"
     import axios from 'axios'
     import star_rate_fixed from "../components/star_rate_fixed"
+
     import {data} from "../js/data"
 
 
@@ -119,9 +135,12 @@
                 username:"",
                 recommendationList:[],
                 is_small:false,
+                userGames:[],
+                userPlatforms:[],
                 times: data["times"],
                 games: data["games"],
-                shows:[false, false,false, false,false, false,false, false,false, false]
+                shows:[false, false,false, false,false, false,false, false,false, false],
+
 
             }
 
@@ -130,7 +149,7 @@
             nav_header,
             nav_footer,
             nav_breadcrumb,
-            star_rate_fixed
+            star_rate_fixed,
         },
         mounted: function () {
             this.username = this.$route.params.username;
@@ -139,6 +158,7 @@
             }
             if(!this.username)this.$router.push({name:"login",});
             this.get_recommendation();
+            this.get_user_info()
 
         },
         methods:{
@@ -149,6 +169,18 @@
                     }
                 }).then((res)=>{
                     this.recommendationList=res.data.result.recommendationList;
+                })
+            },
+            get_user_info(){
+                axios.get("/api/get_user_info", {
+                    params: {
+                        username: this.username
+                    }
+                }).then((res)=>{
+                    console.log(res.data.result);
+                    this.userPlatforms= res.data.result.platform;
+                    this.userGames = res.data.result.playingGames;
+
                 })
             },
             expand(index){
@@ -165,6 +197,13 @@
                     this.recommendationList.splice(index,1);
                     console.log(res);
                 })
+            },
+            isMatched(index){
+                if(this.userGames.includes(index)){
+                    return "green";
+                }else{
+                    return "";
+                }
             }
         }
 

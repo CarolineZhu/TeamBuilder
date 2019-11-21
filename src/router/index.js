@@ -6,6 +6,7 @@ import main from '../views/main_page'
 import user_info from '../views/user_info'
 import recommendation from '../views/recommendation'
 import messages from '../views/messages'
+import team_page from '../views/team_page'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
           path:'/user_info',
           name:"user_info",
           component: user_info
+      },
+      {
+          path:'/team_page',
+          name:"team_page",
+          component: team_page
       },
       {
           path:'/recommendation',

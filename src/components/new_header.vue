@@ -75,7 +75,7 @@
           if(this.id){
             this.loginFlag=true;
             this.username=Cookies.get('username');
-            this.messageNum = parseInt(sessionStorage.getItem("messageNum"));
+            this.messageNum = parseInt(sessionStorage.getItem("messageNum"))||0;
           }
         },
         to_messages(){

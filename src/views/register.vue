@@ -212,14 +212,14 @@
               this.gamePlatforms.splice(index, 1);
           },
           addPlatform(){
-            if(this.gamePlatforms.indexOf(this.selectedPlatform)===-1)
+            if(this.gamePlatforms.indexOf(this.platforms.indexOf(this.selectedPlatform))===-1)
                 this.gamePlatforms.push(this.platforms.indexOf(this.selectedPlatform));
           },
         closeGameChip(index){
           this.playingGames.splice(index, 1);
         },
         addGame(){
-            if(this.playingGames.indexOf(this.selectedGame)===-1)
+            if(this.playingGames.indexOf(this.games.indexOf(this.selectedGame))===-1)
               this.playingGames.push(this.games.indexOf(this.selectedGame));
         },
         changeRate(data){

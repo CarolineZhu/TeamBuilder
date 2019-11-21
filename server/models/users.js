@@ -8,8 +8,16 @@ var userSchema=new Schema({
     favoriteGameType:[Number],
     playingTime:Number,
     platform:[Number],
-    team:[Number],
+    teams:[{
+        id:String,
+        name:String
+    }],
     invitations:[String],
+    team_invitations:[{
+        teamid:String,
+        teamname:String,
+        invitor:String
+    }],
     friends:[String],
     comments:[{
         commentator:String,
@@ -19,6 +27,6 @@ var userSchema=new Schema({
         type:Number,
         default:0
     },
-    blocked:[String]
+    blocked:[String],
 });
 module.exports = mongoose.model("user", userSchema);

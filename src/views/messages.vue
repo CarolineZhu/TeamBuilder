@@ -21,9 +21,9 @@
                                                 <p>Invitations:</p>
                                             </v-toolbar>
                                             <v-divider></v-divider>
-                                            <p v-show="invitations.length===0">No invitations</p>
-                                            <v-list v-for="(item, index) in invitations" two-line style="padding: 0px;" >
-                                                <v-list-item >
+                                            <p v-show="invitations.length+team_invitations===0">No invitations</p>
+                                            <v-list  two-line style="padding: 0px;" >
+                                                <v-list-item v-for="(item, index) in invitations">
                                                     <v-layout align-center justify-center row fill-height >
                                                         <v-flex xs2 >
                                                             <div style="padding-left:10px">
@@ -55,21 +55,41 @@
                                                             </v-btn>
                                                         </v-flex>
                                                         <v-flex xs12>
-                                                            <v-expand-transition>
-                                                                <div v-show="shows[index]">
-                                                                    <v-divider></v-divider>
-
-                                                                    <v-card-text>
-                                                                        <div align="left">
-                                                                            Games:
-                                                                            <v-chip v-for='i in item[1].playingGames'>
-                                                                                {{games[i]}}
-                                                                            </v-chip>
-                                                                            <p>Time: {{times[item[1]["playingTime"]]}}</p>
-                                                                        </div>
-                                                                    </v-card-text>
-                                                                </div>
-                                                            </v-expand-transition>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                </v-list-item>
+                                                <v-list-item v-for="(item, index) in team_invitations">
+                                                    <v-layout align-center justify-center row fill-height >
+                                                        <v-flex xs2 >
+                                                            <div style="padding-left:10px">
+                                                                <v-avatar color="indigo" size="26">
+                                                                    <span class="white--text headline">{{item[0]}}</span>
+                                                                </v-avatar>
+                                                            </div>
+                                                        </v-flex>
+                                                        <v-flex xs2>
+                                                            <a>{{item["invitor"]}}</a>
+                                                        </v-flex>
+                                                        <v-flex xs4>
+                                                            <div> invites you to join <b>{{item["teamname"]}}</b> </div>
+                                                        </v-flex>
+                                                        <v-flex xs2 v-show="!is_small">
+                                                            <v-btn
+                                                                    color="red"
+                                                                    @click="deny_team_invitation(index)"
+                                                            >
+                                                                Deny
+                                                            </v-btn>
+                                                        </v-flex>
+                                                        <v-flex xs2 v-show="!is_small">
+                                                            <v-btn
+                                                                    color="success"
+                                                                    @click="accept_team_invitation(index)"
+                                                            >
+                                                                Accept
+                                                            </v-btn>
+                                                        </v-flex>
+                                                        <v-flex xs12>
                                                         </v-flex>
                                                     </v-layout>
                                                 </v-list-item>
@@ -110,11 +130,10 @@
                 }],
                 username:"",
                 invitations:[],
+                team_invitations:[],
                 is_small:false,
                 times: data["times"],
                 games: data["games"],
-                shows:[false, false,false, false,false, false,false, false,false, false]
-
             }
 
         },
@@ -139,6 +158,7 @@
                     }
                 }).then((res)=>{
                     this.invitations=res.data.result.invitations;
+                    this.team_invitations=res.data.result.team_invitations;
                 }, (err)=>{
                     alert(err)
                 })
@@ -164,6 +184,32 @@
                     this.invitations.splice(index, 1);
                     this.$refs.header.change_message_num(-1);
 
+                }, (err)=>{
+                    alert(err)
+                })
+            },
+            accept_team_invitation(index){
+                axios.post("/api/accept_team_invitation",{
+                    username: this.username,
+                    teamid:this.team_invitations[index]["teamid"],
+                    teamname:this.team_invitations[index]["teamname"],
+                    invitor:this.team_invitations[index]["invitor"]
+                }).then((res)=>{
+                    alert("successfully join the team.");
+                    this.team_invitations.splice(index, 1);
+                    this.$refs.header.change_message_num(-1);
+                }, (err)=>{
+                    alert(err)
+                })
+            },
+            deny_team_invitation(index){
+                axios.post("/api/deny_team_invitation",{
+                    username: this.username,
+                    teamid:this.team_invitations[index]["teamid"],
+                    invitor:this.team_invitations[index]["invitor"]
+                }).then((res)=>{
+                    this.team_invitations.splice(index, 1);
+                    this.$refs.header.change_message_num(-1);
                 }, (err)=>{
                     alert(err)
                 })

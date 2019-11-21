@@ -3,6 +3,7 @@ var router = express.Router();
 var recommend = require('./recommend')
 var mongoose=require('mongoose');
 var Users=require('../models/users');
+var Teams = require('../models/teams');
 mongoose.connect('mongodb://127.0.0.1:27017/Players',{useNewUrlParser: true });
 mongoose.connection.on("connected",()=>{
     console.log("connect success.");
@@ -105,7 +106,7 @@ router.post("/login",  (req, res, next) => {
                     userid:doc._id,
                     username:doc.username,
                     friends:doc.friends,
-                    messageNum:doc.invitations.length
+                    messageNum:doc.invitations.length+doc.team_invitations.length
                 }});
         }
     })
@@ -193,6 +194,7 @@ router.get("/show_invitation_list",  (req, res, next) => {
                     message: "",
                     result: {
                         invitations: doc.invitations,
+                        team_invitations:doc.team_invitations
                     }
                 });
             }
@@ -429,6 +431,208 @@ router.post("/block_and_delete_friends", (req, res, next)=>{
             }
         }
     });
-});    
+});
+
+router.get("/get_team_info", (req, res, next) => {
+    var teamid = req.query.teamid;
+    Teams.findOne({
+        _id:teamid,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding orders.");
+        }else{
+            if (doc) {
+                res.json({
+                    status: '200',
+                    message: "",
+                    result: {
+                        name: doc.name,
+                        creator:doc.creator,
+                        members:doc.members,
+                        activities:doc.activities,
+                        historyMessage:doc.historyMessage
+                    }
+                });
+            }
+        }
+    });
+});
+
+router.get("/get_team_list",  (req, res, next) => {
+    var username=req.query.username;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding orders.");
+        }else{
+            if (doc) {
+                res.json({
+                    status: '200',
+                    message: "",
+                    result: {
+                        teams: doc.teams,
+                    }
+                });
+            }
+        }
+    });
+
+});
+
+router.post("/create_team",  (req, res, next) => {
+    var username=req.body.username;
+    var teamname = req.body.teamname;
+    Teams.create({
+        name: teamname,
+        creator:username,
+        members:[username],
+        activities:[],
+        historyMessage:[]
+    },  (err, doc) => {
+            if (err){
+                on_err(req, res, err, "error when create team.");
+            }else{
+                Users.findOne({username:username},(err, doc2)=> {
+                    if(err){
+                        on_err(req, res, err, "error when add team to user.");
+                    }else{
+                        doc2.teams.push({
+                            id:doc._id,
+                            name:doc.name
+                    });
+                        doc2.save();
+                        res.json({
+                            status:'200',
+                            msg:"",
+                            result:{
+                            }
+                        });
+                    }
+                });
+            }
+    });
+});
+
+router.post("/send_team_invitation",  (req, res, next) => {
+    var username=req.body.username;
+    var teamid=req.body.teamid;
+    var teamname=req.body.teamname;
+    var player=req.body.player;
+    var isInvited=false;
+    Users.findOne({
+        username:player,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding orders.");
+        }else{
+            if (doc) {
+                for(var i=0;i<doc.team_invitations.length;i++){
+                    if(doc.team_invitations[i]["team"]===teamid) {
+                        isInvited = true;
+                        break
+                    }
+                }
+                if(!isInvited){
+                    doc.team_invitations.push({
+                        teamid:teamid,
+                        teamname:teamname,
+                        invitor:username
+                    });
+                    doc.save();
+                }
+                res.json({
+                    status:'200',
+                    message:"",
+                    result:{
+                    }
+                });
+            }
+        }
+    });
+});
+
+router.post("/deny_team_invitation", (req, res, next)=>{
+    var username=req.body.username;
+    var invitor=req.body.invitor;
+    var teamid = req.body.teamid;
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when accept invitations.");
+        }else{
+            for( var i = 0; i < doc.team_invitations.length; i++){
+                if ( doc.team_invitations[i]["teamid"] === teamid && doc.team_invitations[i]["invitor"] === invitor) {
+                    doc.team_invitations.splice(i, 1);
+                    break;
+                }
+            }
+            doc.save();
+            res.json({
+                status:'200',
+                message:"",
+                result:{
+                }
+            });
+        }
+    });
+});
+
+router.post("/accept_team_invitation",  (req, res, next) => {
+    var username=req.body.username;
+    var invitor=req.body.invitor;
+    var teamid = req.body.teamid;
+    var teamname = req.body.teamname;
+    Users.findOne({
+        username: username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when accept invitations.");
+        }else{
+            if (doc) {
+                if (!doc.teams.includes(teamid)) {
+                    for( var i = 0; i < doc.team_invitations.length; i++){
+                        if ( doc.team_invitations[i]["teamid"] === teamid && doc.team_invitations[i]["invitor"] === invitor) {
+                            doc.team_invitations.splice(i, 1);
+                            break;
+                        }
+                    }
+                    doc.teams.push({
+                        id:teamid,
+                        name:teamname,
+                    });
+                    doc.save();
+                    console.log("find user.");
+                    Teams.findOne({
+                        _id:teamid,
+                    }, (err, doc2)=> {
+                        if (err) {
+                            on_err(req, res, err, "error when finding orders.");
+                        }else{
+                            if (doc2) {
+                                if (!doc2.members.includes(username)) {
+                                    doc2.members.push(username);
+                                }
+                                doc2.save((err)=>{
+                                    console.log(err);
+                                });
+                                res.json({
+                                    status:'200',
+                                    message:"",
+                                    result:{
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+});
+
+
 
 module.exports = router;
