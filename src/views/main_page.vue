@@ -229,7 +229,7 @@
             friends:[],
               teams:[],
               teamDialog:false,
-              today: '2019-11-20',
+              today: '2019-11-21',
               events: [
                   {
                       name: 'Weekly CS:GO',

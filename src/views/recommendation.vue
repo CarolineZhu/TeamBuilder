@@ -73,7 +73,7 @@
                                                                                v-bind:value="item[0]*100"></v-progress-linear>
                                                         </v-flex>
                                                         <v-flex xs2>
-                                                            {{item[0]*100}}% match
+                                                            {{parseInt(item[0]*100)}}% match
                                                         </v-flex>
                                                     <v-flex xs12>
                                                     <v-expand-transition>

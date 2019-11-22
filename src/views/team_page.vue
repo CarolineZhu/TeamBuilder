@@ -61,7 +61,7 @@
                                                         >
                                                             <template v-slot:activator="{ on }">
                                                                 <v-btn
-                                                                        color="blue lighten-2"
+                                                                        color="primary lighten-2"
                                                                         dark
                                                                         v-on="on"
                                                                         @click="show_invite_list"
@@ -117,7 +117,35 @@
                                         <v-card-title>
                                             Activities
                                         </v-card-title>
+                                        <v-tabs
+                                                color="primary"
+                                        >
+                                            <v-tab>
+                                                Incoming
+                                            </v-tab>
+                                            <v-tab>
+                                                History
+                                            </v-tab>
+                                        </v-tabs>
+                                        <v-card
+                                                style="margin: 10px"
+                                                max-width=""
+                                        >
+                                            <v-card-text>
+                                                <div style="text-align: left">publish time</div>
+                                                    <p class="display-1 text--primary float: left">
+                                                    Activity Name
+                                                    </p>
+                                                        <p>start date</p>
 
+                                                    <div class="text--primary">
+                                                   Activity content:
+                                                    what will we do
+                                                </div>
+                                            </v-card-text>
+                                            <v-card-actions>
+                                            </v-card-actions>
+                                        </v-card>
                                     </v-card>
                                 </v-flex>
                             </v-layout>
