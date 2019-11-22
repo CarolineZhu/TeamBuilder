@@ -24,14 +24,16 @@ function recommend(Users, player, k, res) {
 
                         var dist = 1 - current[0] / 128;
                         rating /= 5;
-
-                        current[0] = dist * 0.9 + rating * 0.1;
+                        var commonFriends = doc[i].friends.filter(value => -1 !== player.friends.indexOf(value));
+                        var commonRatio = commonFriends.length / player.friends.length;
+                        current[0] = dist * 0.7 + rating * 0.1 + commonRatio * 0.2;
                         recommendationList.push(current);
                     }
                 }
                 recommendationList.sort(function (a, b) {
                     return (b[0] - a[0]);
                 });
+                console.log(recommendationList.slice(0, k));
                 res.json({
                         status: '200',
                         message: "Recomendation returned: ",
