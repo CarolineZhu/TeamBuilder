@@ -70,10 +70,10 @@
 
                                                         <v-flex xs10>
                                                             <v-progress-linear color="green"
-                                                                               value="15"></v-progress-linear>
+                                                                               v-bind:value="item[0]*100"></v-progress-linear>
                                                         </v-flex>
                                                         <v-flex xs2>
-                                                            15% match
+                                                            {{item[0]*100}}% match
                                                         </v-flex>
                                                     <v-flex xs12>
                                                     <v-expand-transition>
