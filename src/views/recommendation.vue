@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" >
         <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
         <v-app id="inspire">
@@ -20,7 +20,7 @@
                                             <v-toolbar flat >
                                                 <p>Recommendations:</p>
                                             </v-toolbar>
-                                            <v-list v-for="(item, index) in recommendationList" three-line style="padding: 0px;" >
+                                            <v-list v-for="(item, index) in recommendationList" three-line style="padding: 10px;" >
                                                 <v-list-item >
                                                     <v-layout align-center justify-center row fill-height >
                                                         <v-flex xs1 >
@@ -69,12 +69,13 @@
                                                         </v-flex>
 
                                                         <v-flex xs10>
-                                                            <v-progress-linear color="green"
+                                                            <v-progress-linear color="#90EE90"
                                                                                v-bind:value="item[0]*100"></v-progress-linear>
                                                         </v-flex>
                                                         <v-flex xs2>
                                                             {{parseInt(item[0]*100)}}% match
                                                         </v-flex>
+
                                                     <v-flex xs12>
                                                     <v-expand-transition>
                                                         <div v-show="shows[index]">
@@ -86,7 +87,7 @@
                                                                     <v-chip v-for='i in item[1].playingGames' v-bind:color="isMatched(i)">
                                                                         {{games[i]}}
                                                                     </v-chip>
-                                                                    <p>Time: <v-chip color="green">{{times[item[1]["playingTime"]]}}</v-chip></p>
+                                                                    <p>Time: <v-chip color="#A9A9A9">{{times[item[1]["playingTime"]]}}</v-chip></p>
                                                                 </div>
 
                                                             </v-card-text>
@@ -200,7 +201,7 @@
             },
             isMatched(index){
                 if(this.userGames.includes(index)){
-                    return "green";
+                    return "#A9A9A9";
                 }else{
                     return "";
                 }

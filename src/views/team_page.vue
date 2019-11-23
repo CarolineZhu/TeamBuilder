@@ -200,6 +200,11 @@
         mounted:function () {
             this.username = this.$route.params.username;
             this.teamid = this.$route.params.teamid;
+            if(this.teamid){
+                sessionStorage.setItem("teamid", JSON.stringify(this.teamid));
+            }else{
+                this.teamid = JSON.parse(sessionStorage.getItem("teamid"))
+            }
 
             if(!this.username){
                 this.username = Cookies.get("username");

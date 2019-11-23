@@ -12,7 +12,7 @@
           </v-flex>
           <v-flex xs12>
             <v-content style="padding: 10px;padding-bottom: 20px;">
-                    <v-card style="position: absolute; left: 50%; top: 50%;transform: translate(-50%, 0%); width: 500px; margin: 20px">
+                    <v-card style="position: absolute; left: 60%; top: 50%;transform: translate(-50%, 0%); width: 500px; margin: 20px">
                       <my_form v-bind:mdShow="true">
                         <div slot="text_fields" >
                           <h2>Register</h2>
@@ -114,6 +114,13 @@
         name: "register",
         data: function () {
             return {
+                note: {
+                    height:"800px",
+                    backgroundImage: "url(" + require("../assets/bg.jpeg") + ") ",
+                    backgroundPosition: "center center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                },
                 nameRules: [
                     v => !!v || 'Name is required',
                     v => (v && v.length <= 15) || 'Name must be less than 15 characters'

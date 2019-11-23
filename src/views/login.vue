@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="height: 450px">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
-    <v-app id="inspire" style="height: 800px">
+    <v-app id="inspire" :style="note">
       <v-container grid-list-md style="margin:0px">
         <v-layout row wrap>
           <v-flex xs12 >
@@ -12,7 +12,7 @@
           </v-flex>
           <v-flex xs12>
             <v-content style="padding: 10px;padding-bottom: 20px">
-              <v-card style="position: absolute; left: 50%; top: 50%;transform: translate(-50%, 0%); width: 500px">
+              <v-card style="position: absolute; left: 60%; top: 50%;transform: translate(-50%, 0%); width: 500px">
                 <my_form v-bind:mdShow="true">
                   <div slot="text_fields" >
                     <h2>Login</h2>
@@ -76,6 +76,13 @@
     name: "register",
     data(){
       return {
+          note: {
+              height:"800px",
+              backgroundImage: "url(" + require("../assets/bg.jpeg") + ") ",
+              backgroundPosition: "center center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+          },
           nameRules:[
               v => !!v || 'Name is required',
               v => (v && v.length <= 15) || 'Name must be less than 15 characters'

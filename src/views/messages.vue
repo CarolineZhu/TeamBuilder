@@ -21,7 +21,7 @@
                                                 <p>Invitations:</p>
                                             </v-toolbar>
                                             <v-divider></v-divider>
-                                            <p v-show="invitations.length+team_invitations===0">No invitations</p>
+                                            <p v-show="invitations.length+team_invitations.length===0">No invitations</p>
                                             <v-list  two-line style="padding: 0px;" >
                                                 <v-list-item v-for="(item, index) in invitations">
                                                     <v-layout align-center justify-center row fill-height >
