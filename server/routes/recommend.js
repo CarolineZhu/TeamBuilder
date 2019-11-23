@@ -25,7 +25,7 @@ function recommend(Users, player, k, res) {
                         var dist = 1 - current[0] / 128;
                         rating /= 5;
                         var commonFriends = doc[i].friends.filter(value => -1 !== player.friends.indexOf(value));
-                        var commonRatio = commonFriends.length / player.friends.length;
+                        var commonRatio = player.friends.length == 0 ? 0 : commonFriends.length / player.friends.length;
                         current[0] = dist * 0.7 + rating * 0.1 + commonRatio * 0.2;
                         recommendationList.push(current);
                     }
