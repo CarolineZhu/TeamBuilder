@@ -7,7 +7,8 @@ var teamSchema=new Schema({
     activities:[{
         title:String,
         content:String,
-        date:String
+        beginDate:String,
+        endDate:String
     }],
     historyMessage:[{
         username:String,

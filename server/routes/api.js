@@ -636,7 +636,8 @@ router.post("/accept_team_invitation",  (req, res, next) => {
 router.post("/create_activity",  (req, res, next) => {
     var username=req.body.username;
     var teamid = req.body.teamid;
-    var date = req.body.date; //string
+    var beginDate = req.body.beginDate; //string
+    var endDate = req.body.endDate; //string
     Teams.findOne({
         _id:teamid,
     }, (err, doc)=> {
@@ -645,29 +646,45 @@ router.post("/create_activity",  (req, res, next) => {
         }else{
             if (doc) {
                 var curTime = new Date();
-                var activityTime = new Date(date); //string to Date object.
+                var beginTime = new Date(beginDate); //string to Date object.
+                var endTime = new Date(endDate);
                 // Try to only show the create activity button to owner in front end.
                 if (doc.creator != username) {
                     on_err(req, res, err, "You are not team owner.");
-                } else if (curTime.getTime() > activityTime.getTime()) {
-                    // console.log(curTime);
-                    // console.log(activityTime);
+                } else if (curTime.getTime() > beginTime.getTime()) {
                     //Try to only show incoming time in front end.
                     on_err(req, res, err, "Can not create past activities.");
+                } else if (beginTime.getTime() > endTime.getTime()) {
+                    on_err(req, res, err, "Begin time should be less than end time.");
                 } else {
-                    var new_activity = {
-                        title:req.body.title,
-                        content:req.body.content,
-                        date: date
-                    };
-                    doc.activities.push(new_activity);
-                    doc.save();
-                    res.json({
-                        status:'200',
-                        message:"",
-                        result:{
+                    var isOverlap = false;
+                    for (var i = 0; i < doc.activities.length; i++) {
+                        var activityBegin = new Date(doc.activities[i].beginDate);
+                        var activityEnd = new Date(doc.activities[i].endDate);
+                        if (activityBegin.getTime() < endTime.getTime() && beginTime.getTime() < activityEnd.getTime()) {
+                            isOverlap = true;
+                            break;
                         }
-                    });
+                    }
+                    //activities overlap.
+                    if (isOverlap)
+                        on_err(req, res, err, "This time period is not available.");
+                    else {
+                        var new_activity = {
+                            title:req.body.title,
+                            content:req.body.content,
+                            beginDate: beginDate,
+                            endDate: endDate
+                        };
+                        doc.activities.push(new_activity);
+                        doc.save();
+                        res.json({
+                            status:'200',
+                            message:"",
+                            result:{
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -688,14 +705,16 @@ router.get("/get_activities",  (req, res, next) => {
                 var activitiesList = [];
                 for (var i = 0; i < doc.activities.length; i++) {
                     var isExpired;
-                    var activityTime = new Date(doc.activities[i].date);
-                    if (curTime.getTime() > activityTime.getTime()) 
+                    // var beginTime = new Date(doc.activities[i].beginDate);
+                    var endTime = new Date(doc.activities[i].endDate);
+                    if (curTime.getTime() > endTime.getTime()) 
                         isExpired = true;
                     else isExpired = false;
                     var activity = {
                         title: doc.activities[i].title,
                         content: doc.activities[i].content,
-                        date: doc.activities[i].date,
+                        beginDate: doc.activities[i].beginDate,
+                        endDate: doc.activities[i].endDate,
                         isExpired: isExpired
                     }
                     activitiesList.push(activity);
@@ -737,18 +756,20 @@ router.get("/get_calendar",  (req, res, next) => {
                         }else{
                             if (doc2) {
                                 for (var j = 0; j < doc2.activities.length; j++) {
-                                    var activityTime = new Date(doc2.activities[j].date);
+                                    var beginTime = new Date(doc2.activities[j].endDate);
+                                    var endTime = new Date(doc2.activities[j].endDate);
                                     //Get activities only in this week.
-                                    if (activityTime.getDate() >= first && activityTime.getDate() <= last) {
+                                    if (beginTime.getDate() >= first && beginTime.getDate() <= last) {
                                         //Check if it expired. If it did, show grey in calendar. Otherwise show green.
                                         var isExpired;
-                                        if (curTime.getTime() > activityTime.getTime()) 
+                                        if (curTime.getTime() > endTime.getTime()) 
                                             isExpired = true;
                                         else isExpired = false;
                                         var activity = {
                                             title: doc2.activities[j].title,
                                             content: doc2.activities[j].content,
-                                            date: doc2.activities[j].date,
+                                            beginDate: doc2.activities[j].beginDate,
+                                            endDate: doc2.activities[j].endDate,
                                             teamId: doc2._id,
                                             isExpired: isExpired
                                         };
