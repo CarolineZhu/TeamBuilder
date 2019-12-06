@@ -633,6 +633,181 @@ router.post("/accept_team_invitation",  (req, res, next) => {
 
 });
 
+router.post("/create_activity",  (req, res, next) => {
+    var username=req.body.username;
+    var teamid = req.body.teamid;
+    var beginDate = req.body.beginDate; //string
+    var endDate = req.body.endDate; //string
+    Teams.findOne({
+        _id:teamid,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when create activities.");
+        }else{
+            if (doc) {
+                var curTime = new Date();
+                var beginTime = new Date(beginDate); //string to Date object.
+                var endTime = new Date(endDate);
+                // Try to only show the create activity button to owner in front end.
+                if (doc.creator != username) {
+                    on_err(req, res, err, "You are not team owner.");
+                } else if (curTime.getTime() > beginTime.getTime()) {
+                    //Try to only show incoming time in front end.
+                    on_err(req, res, err, "Can not create past activities.");
+                } else if (beginTime.getTime() > endTime.getTime()) {
+                    on_err(req, res, err, "Begin time should be less than end time.");
+                } else {
+                    var isOverlap = false;
+                    for (var i = 0; i < doc.activities.length; i++) {
+                        var activityBegin = new Date(doc.activities[i].beginDate);
+                        var activityEnd = new Date(doc.activities[i].endDate);
+                        if (activityBegin.getTime() < endTime.getTime() && beginTime.getTime() < activityEnd.getTime()) {
+                            isOverlap = true;
+                            break;
+                        }
+                    }
+                    //activities overlap.
+                    if (isOverlap)
+                        on_err(req, res, err, "This time period is not available.");
+                    else {
+                        var new_activity = {
+                            title:req.body.title,
+                            content:req.body.content,
+                            beginDate: beginDate,
+                            endDate: endDate
+                        };
+                        doc.activities.push(new_activity);
+                        doc.save();
+                        res.json({
+                            status:'200',
+                            message:"",
+                            result:{
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    });
+});
+
+//Method for team's activities page.
+router.get("/get_activities",  (req, res, next) => {
+    var teamId=req.query.teamId;
+    var curTime = new Date();
+    Teams.findOne({
+        _id : teamId,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding users.");
+        }else{
+            if (doc) {
+                var activitiesList = [];
+                for (var i = 0; i < doc.activities.length; i++) {
+                    var isExpired;
+                    // var beginTime = new Date(doc.activities[i].beginDate);
+                    var endTime = new Date(doc.activities[i].endDate);
+                    if (curTime.getTime() > endTime.getTime()) 
+                        isExpired = true;
+                    else isExpired = false;
+                    var activity = {
+                        title: doc.activities[i].title,
+                        content: doc.activities[i].content,
+                        beginDate: doc.activities[i].beginDate,
+                        endDate: doc.activities[i].endDate,
+                        isExpired: isExpired
+                    }
+                    activitiesList.push(activity);
+                }
+                res.json({
+                    status:'200',
+                    message:"",
+                    result:{
+                        activities: activitiesList
+                    }
+                });
+            }
+        }
+    });
+});
+
+//Method for each user's main page.
+router.get("/get_calendar",  (req, res, next) => {
+    var username=req.query.username;
+    var curTime = new Date();
+    var first = curTime.getDate() - curTime.getDay(); // First day of this week(Sunday).
+    var last = first + 6; // Last day.
+    // console.log(first);
+    // console.log(last);
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding users.");
+        }else{
+            if (doc) {
+                var activitiesList = [];
+                for (var i = 0; i < doc.teams.length; i++) {
+                    Teams.findOne({
+                        _id:doc.teams[i].id,
+                    }, (err, doc2)=> {
+                        if (err) {
+                            on_err(req, res, err, "error when finding teams.");
+                        }else{
+                            if (doc2) {
+                                for (var j = 0; j < doc2.activities.length; j++) {
+                                    var beginTime = new Date(doc2.activities[j].endDate);
+                                    var endTime = new Date(doc2.activities[j].endDate);
+                                    //Get activities only in this week.
+                                    if (beginTime.getDate() >= first && beginTime.getDate() <= last) {
+                                        //Check if it expired. If it did, show grey in calendar. Otherwise show green.
+                                        var isExpired;
+                                        if (curTime.getTime() > endTime.getTime()) 
+                                            isExpired = true;
+                                        else isExpired = false;
+                                        var activity = {
+                                            title: doc2.activities[j].title,
+                                            content: doc2.activities[j].content,
+                                            beginDate: doc2.activities[j].beginDate,
+                                            endDate: doc2.activities[j].endDate,
+                                            teamId: doc2._id,
+                                            isExpired: isExpired
+                                        };
+                                        console.log(activity);
+                                        activitiesList.push(activity);
+                                    }
+                                }
+                                res.json({
+                                    status:'200',
+                                    message:"",
+                                    result:{
+                                        activities: activitiesList
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+});
+
+//The size of bar of different activities will vary. Sometimes it can be very small. 
+//We can show the details in a small window when we click on it.
+//If you don't think it is necessary, just leave it alone.
+router.get("/show_activity_details",  (req, res, next) => {
+    var activity=req.query.activity;
+    res.json({
+        status:'200',
+        message:"",
+        result:{
+            details: activity
+        }
+    });
+});
+
+
 
 
 module.exports = router;
