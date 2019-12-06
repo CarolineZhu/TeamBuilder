@@ -12,7 +12,7 @@
           </v-flex>
           <v-flex xs12>
             <v-content style="padding: 10px;padding-bottom: 20px">
-              <v-card style="position: absolute; left: 60%; top: 50%;transform: translate(-50%, 0%); width: 500px">
+              <v-card style="position: absolute; left: 60%; top: 50%;transform: translate(-50%, 30%); width: 500px">
                 <my_form v-bind:mdShow="true">
                   <div slot="text_fields" >
                     <h2>Login</h2>

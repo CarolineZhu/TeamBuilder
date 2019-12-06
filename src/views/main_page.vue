@@ -223,7 +223,7 @@
             breadcrumbItems:[{
               text:"Home",
               disable:true,
-              href:"/main_page"
+              href:"/"
             }],
               username:"",
             friends:[],
