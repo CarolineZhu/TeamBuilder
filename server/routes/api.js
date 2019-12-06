@@ -633,6 +633,160 @@ router.post("/accept_team_invitation",  (req, res, next) => {
 
 });
 
+router.post("/create_activity",  (req, res, next) => {
+    var username=req.body.username;
+    var teamid = req.body.teamid;
+    var date = req.body.date; //string
+    Teams.findOne({
+        _id:teamid,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when create activities.");
+        }else{
+            if (doc) {
+                var curTime = new Date();
+                var activityTime = new Date(date); //string to Date object.
+                // Try to only show the create activity button to owner in front end.
+                if (doc.creator != username) {
+                    on_err(req, res, err, "You are not team owner.");
+                } else if (curTime.getTime() > activityTime.getTime()) {
+                    // console.log(curTime);
+                    // console.log(activityTime);
+                    //Try to only show incoming time in front end.
+                    on_err(req, res, err, "Can not create past activities.");
+                } else {
+                    var new_activity = {
+                        title:req.body.title,
+                        content:req.body.content,
+                        date: date
+                    };
+                    doc.activities.push(new_activity);
+                    doc.save();
+                    res.json({
+                        status:'200',
+                        message:"",
+                        result:{
+                        }
+                    });
+                }
+            }
+        }
+    });
+});
+
+//Method for team's activities page.
+router.get("/get_activities",  (req, res, next) => {
+    var teamId=req.query.teamId;
+    var curTime = new Date();
+    Teams.findOne({
+        _id : teamId,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding users.");
+        }else{
+            if (doc) {
+                var activitiesList = [];
+                for (var i = 0; i < doc.activities.length; i++) {
+                    var isExpired;
+                    var activityTime = new Date(doc.activities[i].date);
+                    if (curTime.getTime() > activityTime.getTime()) 
+                        isExpired = true;
+                    else isExpired = false;
+                    var activity = {
+                        title: doc.activities[i].title,
+                        content: doc.activities[i].content,
+                        date: doc.activities[i].date,
+                        isExpired: isExpired
+                    }
+                    activitiesList.push(activity);
+                }
+                res.json({
+                    status:'200',
+                    message:"",
+                    result:{
+                        activities: activitiesList
+                    }
+                });
+            }
+        }
+    });
+});
+
+//Method for each user's main page.
+router.get("/get_calendar",  (req, res, next) => {
+    var username=req.query.username;
+    var curTime = new Date();
+    var first = curTime.getDate() - curTime.getDay(); // First day of this week(Sunday).
+    var last = first + 6; // Last day.
+    // console.log(first);
+    // console.log(last);
+    Users.findOne({
+        username:username,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when finding users.");
+        }else{
+            if (doc) {
+                var activitiesList = [];
+                for (var i = 0; i < doc.teams.length; i++) {
+                    Teams.findOne({
+                        _id:doc.teams[i].id,
+                    }, (err, doc2)=> {
+                        if (err) {
+                            on_err(req, res, err, "error when finding teams.");
+                        }else{
+                            if (doc2) {
+                                for (var j = 0; j < doc2.activities.length; j++) {
+                                    var activityTime = new Date(doc2.activities[j].date);
+                                    //Get activities only in this week.
+                                    if (activityTime.getDate() >= first && activityTime.getDate() <= last) {
+                                        //Check if it expired. If it did, show grey in calendar. Otherwise show green.
+                                        var isExpired;
+                                        if (curTime.getTime() > activityTime.getTime()) 
+                                            isExpired = true;
+                                        else isExpired = false;
+                                        var activity = {
+                                            title: doc2.activities[j].title,
+                                            content: doc2.activities[j].content,
+                                            date: doc2.activities[j].date,
+                                            teamId: doc2._id,
+                                            isExpired: isExpired
+                                        };
+                                        console.log(activity);
+                                        activitiesList.push(activity);
+                                    }
+                                }
+                                res.json({
+                                    status:'200',
+                                    message:"",
+                                    result:{
+                                        activities: activitiesList
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+});
+
+//The size of bar of different activities will vary. Sometimes it can be very small. 
+//We can show the details in a small window when we click on it.
+//If you don't think it is necessary, just leave it alone.
+router.get("/show_activity_details",  (req, res, next) => {
+    var activity=req.query.activity;
+    res.json({
+        status:'200',
+        message:"",
+        result:{
+            details: activity
+        }
+    });
+});
+
+
 
 
 module.exports = router;
