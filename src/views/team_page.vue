@@ -116,36 +116,210 @@
                                     <v-card height = "700" >
                                         <v-card-title>
                                             Activities
+                                            <v-spacer></v-spacer>
+                                            <v-dialog
+                                                    v-model="addActivityDialog"
+                                                    width="500"
+                                            >
+                                                <template v-slot:activator="{ on }">
+                                                    <v-btn
+                                                            color="primary lighten-2"
+                                                            dark
+                                                            v-on="on"
+                                                            @click="show_add_activity"
+                                                    >
+                                                            Add
+                                                    </v-btn>
+                                                </template>
+
+                                                <v-card>
+                                                    <v-card-title
+                                                            class="headline grey lighten-2"
+                                                            primary-title
+                                                    >
+                                                        Add New Activity
+                                                    </v-card-title>
+                                                    <v-card-text>
+                                                        <v-text-field
+                                                                v-model="newActivityTitle"
+                                                                :counter="15"
+                                                                label="Activity Title"
+                                                                :rules="rule"
+                                                                required
+                                                        ></v-text-field>
+                                                    </v-card-text>
+                                                    <v-card-text>
+                                                        <v-textarea
+                                                                outlined
+                                                                v-model="newActivityContent"
+                                                                :counter="100"
+                                                                label="Activity Content"
+                                                                :rules="rule"
+                                                                required
+                                                        ></v-textarea>
+                                                    </v-card-text>
+
+                                                    <v-row>
+                                                        <v-col cols="11" sm="5">
+                                                    <v-dialog
+                                                            ref="StartDateDialog"
+                                                            v-model="startDatePickerDialog"
+                                                            :return-value.sync="newActivityStartDate"
+                                                            persistent
+                                                            width="290px"
+                                                    >
+                                                        <template v-slot:activator="{ on }">
+                                                            <v-text-field
+                                                                    style="padding-left: 30px"
+                                                                    v-model="newActivityStartDate"
+                                                                    label="Start Date"
+                                                                    prepend-icon="event"
+                                                                    readonly
+                                                                    v-on="on"
+                                                            ></v-text-field>
+                                                        </template>
+                                                        <v-date-picker v-model="newActivityStartDate" scrollable>
+                                                            <v-spacer></v-spacer>
+                                                            <v-btn text color="primary" @click="startDatePickerDialog = false">Cancel</v-btn>
+                                                            <v-btn text color="primary" @click="$refs.StartDateDialog.save(newActivityStartDate)">OK</v-btn>
+                                                        </v-date-picker>
+                                                    </v-dialog></v-col>
+                                                        <v-col cols="11" sm="5">
+                                                            <v-dialog
+                                                                    ref="StartTimeDialog"
+                                                                    v-model="startTimePickerDialog"
+                                                                    :return-value.sync="newActivityStartTime"
+                                                                    persistent
+                                                                    width="290px"
+                                                            >
+                                                                <template v-slot:activator="{ on }">
+                                                                    <v-text-field
+                                                                            v-model="newActivityStartTime"
+                                                                            label="Start Time"
+                                                                            prepend-icon="event"
+                                                                            readonly
+                                                                            v-on="on"
+                                                                    ></v-text-field>
+                                                                </template>
+                                                                <v-time-picker v-model="newActivityStartTime" scrollable>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-btn text color="primary" @click="startTimePickerDialog = false">Cancel</v-btn>
+                                                                    <v-btn text color="primary" @click="$refs.StartTimeDialog.save(newActivityStartTime)">OK</v-btn>
+                                                                </v-time-picker>
+                                                            </v-dialog></v-col></v-row>
+                                                    <v-row>
+                                                        <v-col cols="11" sm="5">
+                                                            <v-dialog
+                                                                    ref="EndDateDialog"
+                                                                    v-model="endDatePickerDialog"
+                                                                    :return-value.sync="newActivityEndDate"
+                                                                    persistent
+                                                                    width="290px"
+                                                            >
+                                                                <template v-slot:activator="{ on }">
+                                                                    <v-text-field
+                                                                            style="padding-left: 30px"
+                                                                            v-model="newActivityEndDate"
+                                                                            label="End Date"
+                                                                            prepend-icon="event"
+                                                                            readonly
+                                                                            v-on="on"
+                                                                    ></v-text-field>
+                                                                </template>
+                                                                <v-date-picker v-model="newActivityEndDate" scrollable>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-btn text color="primary" @click="endDatePickerDialog = false">Cancel</v-btn>
+                                                                    <v-btn text color="primary" @click="$refs.EndDateDialog.save(newActivityEndDate)">OK</v-btn>
+                                                                </v-date-picker>
+                                                            </v-dialog></v-col>
+                                                        <v-col cols="11" sm="5">
+                                                            <v-dialog
+                                                                    ref="EndTimeDialog"
+                                                                    v-model="endTimePickerDialog"
+                                                                    :return-value.sync="newActivityEndTime"
+                                                                    persistent
+                                                                    width="290px"
+                                                            >
+                                                                <template v-slot:activator="{ on }">
+                                                                    <v-text-field
+                                                                            v-model="newActivityEndTime"
+                                                                            label="End Time"
+                                                                            prepend-icon="event"
+                                                                            readonly
+                                                                            v-on="on"
+                                                                    ></v-text-field>
+                                                                </template>
+                                                                <v-time-picker v-model="newActivityEndTime" scrollable>
+                                                                    <v-spacer></v-spacer>
+                                                                    <v-btn text color="primary" @click="endTimePickerDialog = false">Cancel</v-btn>
+                                                                    <v-btn text color="primary" @click="$refs.EndTimeDialog.save(newActivityEndTime)">OK</v-btn>
+                                                                </v-time-picker>
+                                                            </v-dialog></v-col></v-row>
+                                                    <v-divider></v-divider>
+
+                                                    <v-card-actions>
+                                                        <v-spacer></v-spacer>
+                                                        <v-btn
+                                                                color="primary"
+                                                                text
+                                                                @click="add_activities"
+                                                                style="padding-right: 30px"
+                                                        >
+                                                            Add Activity
+                                                        </v-btn>
+                                                    </v-card-actions>
+                                                </v-card>
+                                            </v-dialog>
                                         </v-card-title>
+
                                         <v-tabs
                                                 color="primary"
                                         >
-                                            <v-tab>
+                                            <v-tab @click="showPast=false">
                                                 Incoming
                                             </v-tab>
-                                            <v-tab>
+                                            <v-tab @click="showPast=true">
                                                 History
                                             </v-tab>
                                         </v-tabs>
-                                        <v-card
+                                        <v-sheet>
+                                        <v-card v-show="!showPast"
+                                                v-for="activity in activities"
                                                 style="margin: 10px"
                                                 max-width=""
                                         >
                                             <v-card-text>
-                                                <div style="text-align: left">publish time</div>
-                                                    <p class="display-1 text--primary float: left">
-                                                    Activity Name
-                                                    </p>
-                                                        <p>start date</p>
+                                                <p class="display-1 text--primary float: left">
+                                                    {{activity["title"]}}
+                                                </p><v-divider></v-divider>
+                                                <p>start : {{activity["beginDate"].replace('T', ' ')}} <br>end : {{activity["endDate"].replace('T', ' ')}}</p>
 
-                                                    <div class="text--primary">
-                                                   Activity content:
-                                                    what will we do
+                                                <div class="text--primary">
+                                                    <p style="font-size: 20px">{{activity["content"]}}</p>
                                                 </div>
                                             </v-card-text>
                                             <v-card-actions>
                                             </v-card-actions>
                                         </v-card>
+                                            <v-card v-show="showPast"
+                                                    v-for="activity in pastActivities"
+                                                    style="margin: 10px"
+                                                    max-width=""
+                                            >
+                                                <v-card-text>
+                                                    <p class="display-1 text--primary float: left">
+                                                        {{activity["title"]}}
+                                                    </p><v-divider></v-divider>
+                                                    <p>start : {{activity["beginDate"].replace('T', ' ')}} <br>end : {{activity["endDate"].replace('T', ' ')}}</p>
+
+                                                    <div class="text--primary">
+                                                        <p style="font-size: 20px">{{activity["content"]}}</p>
+                                                    </div>
+                                                </v-card-text>
+                                                <v-card-actions>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-sheet>
                                     </v-card>
                                 </v-flex>
                             </v-layout>
@@ -181,15 +355,30 @@
                     disable:true,
                     href:"/"
                 }],
+                rule: [
+                    value => !!value || 'Required.'],
                 username:"",
                 teamid:"",
                 teamname:"",
                 members:[],
                 historyMessage:[],
                 activities:[],
+                pastActivities:[],
                 inviteDialog:false,
                 friends:[],
-                selectedFriends:[]
+                selectedFriends:[],
+                addActivityDialog:false,
+                newActivityTitle:"",
+                newActivityContent:"",
+                newActivityStartTime:"",
+                newActivityStartDate:new Date().toISOString().substr(0, 10),
+                newActivityEndDate:new Date().toISOString().substr(0, 10),
+                newActivityEndTime:"",
+                startDatePickerDialog:false,
+                startTimePickerDialog:false,
+                endDatePickerDialog:false,
+                endTimePickerDialog:false,
+                showPast:false,
             }
         },
         components:{
@@ -211,6 +400,7 @@
             }
             if(!this.username)this.$router.push({name:"login",});
             this.get_team_info();
+            this.get_activities()
         },
         methods:{
             get_team_info(){
@@ -222,7 +412,6 @@
                 }).then((res)=>{
                     this.teamname = res.data.result.name;
                     this.members = res.data.result.members;
-                    this.activities = res.data.result.activities;
                     this.historyMessage = res.data.result.historyMessage;
                 })
             },
@@ -258,9 +447,61 @@
                         teamname:this.teamname,
                         player:this.selectedFriends[i]
                     }).then((res)=>{
+                        if(res.data.status==="200"){
+                            alert("add friend success!");
+                        }else{
+                            alert(res.data.message);
+                        }
                     })
                 }
                 alert("send invitation succeeds!")
+            },
+            show_add_activity(){
+              this.addActivityDialog=true;
+            },
+            close_start_date_picker(){
+                this.startDatePickerDialog=false;
+                $refs.dialog.save(this.newActivityStartDate);
+            },
+            add_activities(){
+                var beginDate=this.newActivityStartDate+"T"+this.newActivityStartTime+":00";
+                var endDate=this.newActivityEndDate+"T"+this.newActivityEndTime+":00";
+                if(this.newActivityTitle !==""|| this.newActivityContent!==""){
+                axios.post("/api/create_activity", {
+                    username: this.username,
+                    teamid:this.teamid,
+                    title:this.newActivityTitle,
+                    content:this.newActivityContent,
+                    beginDate:beginDate,
+                    endDate:endDate
+                }).then((res)=>{
+                    if(res.data.status==="200"){
+                        alert("add activity success!");
+                        this.get_activities()
+                    }else{
+                        alert(res.data.message);
+                    }
+                    this.addActivityDialog=false;
+                })}
+            },
+            get_activities(){
+                axios.get("/api/get_activities", {
+                    params:{
+                        teamId:this.teamid
+                    }
+                }).then((res)=>{
+                    var activities=res.data.result.activities;
+                    this.activities=[];
+                    this.pastActivities=[];
+                    for(var i=0;i<activities.length;i++){
+                        if(activities[i]['isExpired']===false){
+                            this.activities.push(activities[i])
+                        }else{
+                            this.pastActivities.push(activities[i])
+                        }
+                    }
+                })
+
             }
         }
     }

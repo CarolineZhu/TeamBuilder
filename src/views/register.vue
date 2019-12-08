@@ -187,7 +187,7 @@
             return;
           }
           if(this.password !== this.rpassword){
-            this.errorTip="two passwords inconsistant!";
+            this.errorTip="two passwords inconsistent!";
             this.tipShow=true;
           }else{
             axios.post("/api/register", {

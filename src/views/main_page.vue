@@ -133,8 +133,6 @@
                         </div>
                       </v-list>
 
-
-
                     </v-navigation-drawer>
                   </v-card>
                 </v-flex>
@@ -153,6 +151,7 @@
                                     :now="today"
                                     :value="today"
                                     :events="events"
+                                    @click:event="showEvent"
                                     color="primary"
                                     type="week"
                             >
@@ -178,12 +177,33 @@
                                           :key="event.title"
                                           :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
                                           class="my-event with-time"
-                                          @click="open(event)"
+                                          @click=""
                                           v-html="event.title"
                                   ></div>
                                 </template>
                               </template>
-                            </v-calendar>
+                            </v-calendar>  <v-dialog
+                                  v-model="showEventDialog"
+                                  width="500"
+                          >
+                            <v-card
+                                    max-width=""
+                            >
+                              <v-card-text>
+                                <p class="display-1 text--primary float: left">
+                                  {{selectedActivity["name"]}}
+                                </p><v-divider></v-divider>
+                                <p>start : {{selectedActivity["start"]}} <br>end : {{selectedActivity["end"]}}</p>
+
+                                <div class="text--primary">
+                                  <p style="font-size: 20px">{{selectedActivity["content"]}}</p>
+                                </div>
+                              </v-card-text>
+                              <v-card-actions>
+                              </v-card-actions>
+                            </v-card>
+
+                          </v-dialog>
                           </v-sheet>
                         </v-col>
                       </v-row>
@@ -229,16 +249,12 @@
             friends:[],
               teams:[],
               teamDialog:false,
-              today: '2019-11-21',
+              today: new Date().getDay(),
               events: [
                   {
                       name: 'Weekly CS:GO',
                       start: '2019-11-18 09:00',
                       end: '2019-11-19 10:00',
-                  },
-                  {
-                      name: 'Coh2 free day',
-                      start: '2019-11-20',
                   },
                   {
                       name: 'GTA5 mission',
@@ -247,7 +263,14 @@
                   },
               ],
               showTeams:false,
-              newTeamName:""
+              newTeamName:"",
+              showEventDialog:false,
+              selectedActivity:{
+                name:"",
+                  start:"",
+                  end:"",
+                  content:"",
+              }
           }
       },
         components:{
@@ -282,6 +305,7 @@
                   }
               }).then((res)=>{
                   this.teams = res.data.result.teams;
+                  this.get_calendar();
               })
           },
           show_teams(){
@@ -323,6 +347,30 @@
                   this.teamDialog=false;
                   this.show_teams()
               })
+          },
+          get_calendar(){
+                console.log(this.teams.length);
+              for(let i=0;i<this.teams.length;i++){
+                axios.get("api/get_team_info", {
+                  params:{
+                      teamid:this.teams[i]['id']
+                  }}).then((res)=>{
+                      var acts = res.data.result.activities;
+                      for(var j=0;j<acts.length;j++){
+                        this.events.push({
+                            name:acts[j]['title'],
+                            start:acts[j]['beginDate'].replace('T', ' '),
+                            end:acts[j]['endDate'].replace('T', ' '),
+                            content:acts[j]['content']
+                        })
+                      }
+                });
+              }
+          },
+          showEvent(event){
+              console.log(event);
+              this.selectedActivity=event['event'];
+              this.showEventDialog=true;
           }
     }
   }

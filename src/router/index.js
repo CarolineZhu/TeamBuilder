@@ -8,7 +8,7 @@ import recommendation from '../views/recommendation'
 import messages from '../views/messages'
 import team_page from '../views/team_page'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [

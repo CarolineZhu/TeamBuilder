@@ -237,7 +237,9 @@
                 }).then((res)=>{
                     if(res.data.status==="200"){
                     alert("Rate Friend Successfully");
-                    this.rated = true;}else{
+                    this.rated = true;
+                    this.getInfo()
+                    }else{
                         alert(res.data.message)
                     }
                 })

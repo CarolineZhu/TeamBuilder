@@ -716,7 +716,8 @@ router.get("/get_activities",  (req, res, next) => {
                         beginDate: doc.activities[i].beginDate,
                         endDate: doc.activities[i].endDate,
                         isExpired: isExpired
-                    }
+                    };
+                    console.log(activity);
                     activitiesList.push(activity);
                 }
                 res.json({
@@ -773,7 +774,6 @@ router.get("/get_calendar",  (req, res, next) => {
                                             teamId: doc2._id,
                                             isExpired: isExpired
                                         };
-                                        console.log(activity);
                                         activitiesList.push(activity);
                                     }
                                 }
@@ -789,20 +789,6 @@ router.get("/get_calendar",  (req, res, next) => {
                     });
                 }
             }
-        }
-    });
-});
-
-//The size of bar of different activities will vary. Sometimes it can be very small. 
-//We can show the details in a small window when we click on it.
-//If you don't think it is necessary, just leave it alone.
-router.get("/show_activity_details",  (req, res, next) => {
-    var activity=req.query.activity;
-    res.json({
-        status:'200',
-        message:"",
-        result:{
-            details: activity
         }
     });
 });
