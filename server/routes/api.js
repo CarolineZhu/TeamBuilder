@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var recommend = require('./recommend')
+var recommend = require('./recommend');
 var mongoose=require('mongoose');
 var Users=require('../models/users');
 var Teams = require('../models/teams');

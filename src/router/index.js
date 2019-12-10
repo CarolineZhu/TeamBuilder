@@ -7,6 +7,7 @@ import user_info from '../views/user_info'
 import recommendation from '../views/recommendation'
 import messages from '../views/messages'
 import team_page from '../views/team_page'
+import chatroom from '../views/chatroom'
 
 Vue.use(Router);
 
@@ -47,6 +48,11 @@ export default new Router({
           name:"messages",
           component: messages
       },
+      {
+          path:'/chatroom',
+          name:"chatroom",
+          component: chatroom
+      }
 
   ]
 })

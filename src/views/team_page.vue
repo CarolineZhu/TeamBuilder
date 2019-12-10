@@ -45,8 +45,16 @@
                                                             <v-list-item-avatar color="indigo" size="32">
                                                                 <span class="white--text headline">{{member[0]}}</span>
                                                             </v-list-item-avatar>
+
                                                             <v-list-item-content>
-                                                                <v-list-item-title v-text="member"></v-list-item-title>
+                                                                <svg                                                             v-show="member===creator"
+                                                                                                                                 viewBox="0 0 24 24" width="20px" height="20px" fill="gold">
+                                                                    <path d="M12 8L15 13.2L18 10.5L17.3 14H6.7L6 10.5L9 13.2L12 8M12 4L8.5 10L3 5L5 16H19L21 5L15.5 10L12 4M19 18H5V19C5 19.6 5.4 20 6 20H18C18.6 20 19 19.6 19 19V18Z"/>
+                                                                </svg>
+
+                                                                <v-list-item-title v-text="member">
+
+                                                                </v-list-item-title>
                                                             </v-list-item-content>
 
                                                             <v-list-item-action>
@@ -123,6 +131,7 @@
                                             >
                                                 <template v-slot:activator="{ on }">
                                                     <v-btn
+                                                            v-show="isCreator"
                                                             color="primary lighten-2"
                                                             dark
                                                             v-on="on"
@@ -379,6 +388,8 @@
                 endDatePickerDialog:false,
                 endTimePickerDialog:false,
                 showPast:false,
+                isCreator:false,
+                creator:""
             }
         },
         components:{
@@ -413,6 +424,8 @@
                     this.teamname = res.data.result.name;
                     this.members = res.data.result.members;
                     this.historyMessage = res.data.result.historyMessage;
+                    this.creator=res.data.result.creator;
+                    this.isCreator = (this.username ===res.data.result.creator)
                 })
             },
             get_friends(){
@@ -448,7 +461,7 @@
                         player:this.selectedFriends[i]
                     }).then((res)=>{
                         if(res.data.status==="200"){
-                            alert("add friend success!");
+                            alert("add "+this.selectedFriends[i]+" success!");
                         }else{
                             alert(res.data.message);
                         }
