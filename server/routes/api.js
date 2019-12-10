@@ -649,28 +649,27 @@ router.post("/delete_member",  (req, res, next) => {
             on_err(req, res, err, "error when delete team member.");
         }else{
             if (doc) {
-                // Try to only show the create activity button to owner in front end.
                 console.log(req.body);
                 if (doc.creator != username) {
                     on_err(req, res, err, "You are not team owner.");
                 } else {
                     for (var i = 0; i < doc.members.length; i++) {
-                        if (doc.members[i] == player) {
+                        if (doc.members[i] === player) {
                             doc.members.splice(i, 1);
                             break;
                         }
                     }
                     doc.save();
                     Users.findOne({
-                        username: username,
+                        username: player,
                     }, (err, doc2)=> {
                         if (err) {
                             on_err(req, res, err, "error when delete team member.");
                         }else{
                             if (doc2) {
-                                for (var j = 0; j < doc2.team.length; j++) {
-                                    if (doc.team[j] == teamId) {
-                                        doc.team.splice(j, 1);
+                                for (var j = 0; j < doc2.teams.length; j++) {
+                                    if (doc2.teams[j]['id'] === teamId) {
+                                        doc2.teams.splice(j, 1);
                                         break;
                                     }
                                 }

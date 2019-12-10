@@ -41,7 +41,7 @@
                           <v-tab @click="show_teams">teams</v-tab>
                         </v-tabs>
                         <div v-show="!showTeams">
-                        <v-sheet height="400">
+                        <v-sheet height="400" style="overflow: auto">
                         <v-list-item
                           v-for="friend in friends"
                           @click="to_info(friend)"

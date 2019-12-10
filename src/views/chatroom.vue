@@ -31,6 +31,7 @@
                             v-model="newMessage"
                             label="send message"
                             style="padding-left: 10px"
+                            @keyup.enter="sendMessage"
                     ></v-text-field>
                 </v-flex>
                 <v-flex xs3 style="padding-top:18px; padding-left:0px">
@@ -98,8 +99,6 @@
                 };
                 this.g_socket.emit('text', newMessage);
                 this.messages.push(newMessage);
-
-
 
                 this.$nextTick(() => {
                     let msg = document.getElementById('chat_box');

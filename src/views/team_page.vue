@@ -36,30 +36,49 @@
                                                 <v-tabs>
                                                     <v-tab>members</v-tab>
                                                 </v-tabs>
-                                                <div>
-                                                    <v-sheet height="400">
-                                                        <v-list-item
-                                                                v-for="member in members"
-                                                                @click="to_info(member)"
-                                                        >
-                                                            <v-list-item-avatar color="indigo" size="32">
-                                                                <span class="white--text headline">{{member[0]}}</span>
-                                                            </v-list-item-avatar>
+                                                <div style="overflow: auto; height: 400px">
+                                                    <v-sheet>
+                                                        <div v-for="member in members">
+                                                            <v-menu offset-x>
+                                                                <template v-slot:activator="{ on }">
+                                                                <v-list-item
+                                                                        v-on="on"
+                                                                >
+                                                                    <v-list-item-avatar color="indigo" size="32">
+                                                                        <span class="white--text headline">{{member[0]}}</span>
+                                                                    </v-list-item-avatar>
 
-                                                            <v-list-item-content>
-                                                                <svg                                                             v-show="member===creator"
-                                                                                                                                 viewBox="0 0 24 24" width="20px" height="20px" fill="gold">
-                                                                    <path d="M12 8L15 13.2L18 10.5L17.3 14H6.7L6 10.5L9 13.2L12 8M12 4L8.5 10L3 5L5 16H19L21 5L15.5 10L12 4M19 18H5V19C5 19.6 5.4 20 6 20H18C18.6 20 19 19.6 19 19V18Z"/>
-                                                                </svg>
+                                                                    <v-list-item-content>
+                                                                        <svg                                                             v-show="member===creator"
+                                                                                                                                         viewBox="0 0 24 24" width="20px" height="20px" fill="gold">
+                                                                            <path d="M12 8L15 13.2L18 10.5L17.3 14H6.7L6 10.5L9 13.2L12 8M12 4L8.5 10L3 5L5 16H19L21 5L15.5 10L12 4M19 18H5V19C5 19.6 5.4 20 6 20H18C18.6 20 19 19.6 19 19V18Z"/>
+                                                                        </svg>
 
-                                                                <v-list-item-title v-text="member">
+                                                                        <v-list-item-title v-text="member">
 
-                                                                </v-list-item-title>
-                                                            </v-list-item-content>
+                                                                        </v-list-item-title>
+                                                                    </v-list-item-content>
 
-                                                            <v-list-item-action>
-                                                            </v-list-item-action>
-                                                        </v-list-item></v-sheet>
+                                                                    <v-list-item-action>
+                                                                    </v-list-item-action>
+                                                                </v-list-item>
+                                                                </template>
+                                                                <v-list>
+                                                                    <v-list-item
+                                                                            v-show="member!==creator && username===creator"
+                                                                            @click="delete_member(member)"
+                                                                    >
+                                                                        <v-list-item-title>Delete Member</v-list-item-title>
+                                                                    </v-list-item>
+                                                                    <v-list-item
+                                                                            @click="to_info(member)"
+                                                                    >
+                                                                        <v-list-item-title>See Info</v-list-item-title>
+                                                                    </v-list-item>
+                                                                </v-list>
+                                                            </v-menu>
+                                                        </div>
+                                                    </v-sheet>
                                                     <v-divider></v-divider>
                                                     <div style="height: 10px"></div>
                                                     <div class="text-center">
@@ -461,6 +480,7 @@
             invite_friends(){
                 this.inviteDialog=false;
                 for(var i=0;i<this.selectedFriends.length;i++){
+                    var name=this.selectedFriends[i];
                     axios.post("/api/send_team_invitation", {
                         username: this.username,
                         teamid:this.teamid,
@@ -468,7 +488,7 @@
                         player:this.selectedFriends[i]
                     }).then((res)=>{
                         if(res.data.status==="200"){
-                            alert("add "+this.selectedFriends[i]+" success!");
+                            //alert("Invite "+name+" success!");
                         }else{
                             alert(res.data.message);
                         }
@@ -523,14 +543,16 @@
                 })
 
             },
-            to_chatroom(){
-                this.$router.push({
-                    name:"chatroom",
-                    params:{
-                        username: this.username,
-                        teamid: this.teamid
-                    }
-                });
+            delete_member(member){
+                axios.post("/api/delete_member",{
+                    username: this.username,
+                    player: member,
+                    teamid: this.teamid
+                }).then((res)=>{
+                    alert("Delete Member Successfully");
+                    this.get_team_info()
+
+            })
             }
         }
     }
