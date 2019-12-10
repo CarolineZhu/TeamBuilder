@@ -98,8 +98,13 @@
                 };
                 this.g_socket.emit('text', newMessage);
                 this.messages.push(newMessage);
-                let msg = document.getElementById('chat_box');
-                msg.scrollTop = msg.scrollHeight;
+
+
+
+                this.$nextTick(() => {
+                    let msg = document.getElementById('chat_box');
+                    msg.scrollTop = msg.scrollHeight;
+                });
                 axios.post("api/send_message",{
                     message:this.newMessage,
                     username:this.username,
@@ -113,10 +118,12 @@
             onMessageReceive(data){
                 if(data['username']!==this.username) {
                     this.messages.push(data);
-                    let msg = document.getElementById('chat_box');
-                    msg.scrollTop = msg.scrollHeight;
+                    this.$nextTick(() => {
+                        let msg = document.getElementById('chat_box');
+                        msg.scrollTop = msg.scrollHeight;
+                    });
                 }
-                
+
             },
             onClose() {
                 this.visible = false;
