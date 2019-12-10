@@ -633,8 +633,44 @@ router.post("/accept_team_invitation",  (req, res, next) => {
 
 });
 
+router.post("/delete_member",  (req, res, next) => {
+    var username = req.body.username;
+    var teamId = req.body.teamid;
+    var player = req.body.player;
+    Teams.findOne({
+        _id: teamId,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when delete team member.");
+        }else{
+            if (doc) {
+                // Try to only show the create activity button to owner in front end.
+                console.log(req.body);
+                if (doc.creator != username) {
+                    on_err(req, res, err, "You are not team owner.");
+                } else {
+                    for (var i = 0; i < doc.members.length; i++) {
+                        if (doc.members[i] == player) {
+                            doc.members.splice(i, 1);
+                            break;
+                        }
+                    }
+                    doc.save();
+                    res.json({
+                        status:'200',
+                        message:"",
+                        result:{
+                        }
+                    });
+                }
+            }
+        }
+    });
+});
+
+
 router.post("/create_activity",  (req, res, next) => {
-    var username=req.body.username;
+    var username = req.body.username;
     var teamid = req.body.teamid;
     var beginDate = req.body.beginDate; //string
     var endDate = req.body.endDate; //string
@@ -793,7 +829,59 @@ router.get("/get_calendar",  (req, res, next) => {
     });
 });
 
+router.post("/send_message",  (req, res, next) => {
+    var teamId = req.body.teamid;
+    var username = req.body.username;
+    var message = req.body.message;
+    Teams.findOne({
+        _id: teamId,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when send message.");
+        }else{
+            if (doc) {
+                var curTime = new Date();
+                console.log(curTime.toString());
+                var new_message = {
+                    username: username,
+                    message: message,
+                    time: curTime.toString()
+                };
+                doc.historyMessage.push(new_message);
+                doc.save();
+                res.json({
+                    status:'200',
+                    message:"",
+                    result:{}
+                });
+            }
+        }
+    });
+});
 
+//Show history on most recent first.
+router.get("/get_history",  (req, res, next) => {
+    var teamId=req.query.teamid;
+    Teams.findOne({
+        _id: teamId,
+    }, (err, doc)=> {
+        if (err) {
+            on_err(req, res, err, "error when get team chat history.");
+        }else{
+            if (doc) {
+                res.json({
+                    status:'200',
+                    message:"",
+                    result:{
+                        //Show messages, sender's name like Wechat. Show sending time beside name.
+                        //If the message was sent by the user, it should appear on right side. Otherwise on left side.
+                        history: doc.historyMessage
+                    }
+                });
+            }
+        }
+    });
+});
 
 
 module.exports = router;
