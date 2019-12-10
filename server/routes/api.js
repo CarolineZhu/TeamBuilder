@@ -447,31 +447,6 @@ router.get("/get_team_info", (req, res, next) => {
             on_err(req, res, err, "error when finding orders.");
         }else{
             if (doc) {
-                var g_socket;
-                if (res.cookies['socket']) g_socket = res.cookies['socket'];
-                else g_socket = io.connect('http://localhost:4001', { query: 'name='+username });
-                res.cookie("socket",g_socket,{
-                    path:'/',
-                    maxAge:1000*60*600
-                });
-                g_socket.on('connect', function (socket) {
-                    g_socket.emit('create', teamid);
-                });
-                g_socket.on('new member', function (data) {
-                    console.log(data);
-                    g_socket.emit('my other event', { my: 'data' });
-                });
-                //Disconnect.
-                // socket.on('ready', function (){
-                //     socket.close();
-                // });
-                g_socket.on('new message', function (data){
-                    //message object here. Show them in chat room in real time.
-                    console.log(data);
-                });
-                g_socket.on('user disconnected', function (name) {
-                    console.log(name + ' is disconnected.');
-                });
                 res.json({
                     status: '200',
                     message: "",
@@ -864,9 +839,6 @@ router.post("/send_message",  (req, res, next) => {
     var teamId = req.body.teamid;
     var username = req.body.username;
     var message = req.body.message;
-    
-    res.cookies['socket'].emit('text', {room: teamId, username: username, content:message});
-    
     Teams.findOne({
         _id: teamId,
     }, (err, doc)=> {
@@ -878,7 +850,7 @@ router.post("/send_message",  (req, res, next) => {
                 var new_message = {
                     username: username,
                     message: message,
-                    time: curTime.toString()
+                    time: curTime.toString().substring(0,25)
                 };
                 doc.historyMessage.push(new_message);
                 doc.save();

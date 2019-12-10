@@ -44,15 +44,17 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-  console.log(socket.handshake.query['name']);
-  io.emit('new member', socket.handshake.query['name'] + ' is connect now.');
+  //io.emit('new member', socket.handshake.query['name'] + ' is connect now.');
   socket.on('text', function (data) {
-    console.log(data);
+    console.log("get text: "+data['content']);
     var room = data['room'];
     io.to(room).emit('new message', data);
+      console.log("sent to room: " + room);
   });
   socket.on('create', function(room) {
+    console.log("join room:"+room);
     socket.join(room);
+    io.to(room).emit('new member', socket.handshake.query['name'])
   });
   socket.on('disconnect', function () {
     console.log(socket.handshake.query['name'] + ' is disconnected.');

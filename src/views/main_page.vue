@@ -2,7 +2,7 @@
   <div id="app">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
     <v-app id="inspire">
-      <v-container style="padding: 0px; margin: 0px; border: 0px" grid-list-md >
+      <v-container style="margin:10px; max-width:1700px" >
         <v-layout align-start justify-start row wrap>
           <v-flex xs12>
             <nav_header ref="header">
@@ -15,9 +15,9 @@
                   <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems">
                   </nav_breadcrumb>
                 </v-flex>
-                <v-flex xs4 class="hidden-sm-and-down">
+                <v-flex xs3 class="hidden-sm-and-down">
                   <v-card
-                    height="700"
+                    height="650"
                   >
                     <v-navigation-drawer
                       permanent
@@ -138,14 +138,14 @@
                 </v-flex>
 
                 <v-flex md8>
-                  <v-card height = "700" >
+                  <v-card height = "650" >
                     <v-card-title>
                       Activities
                     </v-card-title>
                     <div>
                       <v-row>
                         <v-col>
-                          <v-sheet height="600">
+                          <v-sheet height="500">
                             <v-calendar
                                     ref="calendar"
                                     :now="today"

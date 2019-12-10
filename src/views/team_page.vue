@@ -2,7 +2,7 @@
     <div id="app">
         <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
         <v-app id="inspire">
-            <v-container style="padding: 0px; margin: 0px; border: 0px" grid-list-md >
+            <v-container style="margin:10px; max-width:1700px" >
                 <v-layout align-start justify-start row wrap>
                     <v-flex xs12>
                         <nav_header ref="header">
@@ -15,9 +15,9 @@
                                     <nav_breadcrumb v-bind:breadcrumbItems="breadcrumbItems">
                                     </nav_breadcrumb>
                                 </v-flex>
-                                <v-flex xs4 class="hidden-sm-and-down">
+                                <v-flex xs3 class="hidden-sm-and-down">
                                     <v-card
-                                            height="700"
+                                            height="650"
                                     >
                                         <v-navigation-drawer
                                                 permanent
@@ -120,8 +120,9 @@
                                     </v-card>
                                 </v-flex>
 
-                                <v-flex md8>
-                                    <v-card height = "700" >
+                                <v-flex xs5>
+
+                                    <v-card height = "650px" >
                                         <v-card-title>
                                             Activities
                                             <v-spacer></v-spacer>
@@ -291,7 +292,7 @@
                                                 History
                                             </v-tab>
                                         </v-tabs>
-                                        <v-sheet>
+                                        <v-sheet height="500px" style="overflow: auto">
                                         <v-card v-show="!showPast"
                                                 v-for="activity in activities"
                                                 style="margin: 10px"
@@ -331,6 +332,9 @@
                                         </v-sheet>
                                     </v-card>
                                 </v-flex>
+                                <v-flex xs3>
+                                   <chatroom :history-message="historyMessage"></chatroom>
+                                </v-flex>
                             </v-layout>
                         </v-container>
 
@@ -350,6 +354,7 @@
     import nav_header from "../components/new_header"
     import nav_footer from "../components/new_footer"
     import nav_breadcrumb from "../components/new_breadcrumb"
+    import chatroom from "../views/chatroom"
     import Cookies from 'js-cookie'
     import axios from 'axios'
 
@@ -389,13 +394,14 @@
                 endTimePickerDialog:false,
                 showPast:false,
                 isCreator:false,
-                creator:""
+                creator:"",
             }
         },
         components:{
             nav_header,
             nav_footer,
-            nav_breadcrumb
+            nav_breadcrumb,
+            chatroom
         },
         mounted:function () {
             this.username = this.$route.params.username;
@@ -425,7 +431,8 @@
                     this.members = res.data.result.members;
                     this.historyMessage = res.data.result.historyMessage;
                     this.creator=res.data.result.creator;
-                    this.isCreator = (this.username ===res.data.result.creator)
+                    this.isCreator = (this.username ===res.data.result.creator);
+                    this.historyMessage = res.data.result.historyMessage
                 })
             },
             get_friends(){
@@ -515,6 +522,15 @@
                     }
                 })
 
+            },
+            to_chatroom(){
+                this.$router.push({
+                    name:"chatroom",
+                    params:{
+                        username: this.username,
+                        teamid: this.teamid
+                    }
+                });
             }
         }
     }

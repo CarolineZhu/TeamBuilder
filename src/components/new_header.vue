@@ -4,7 +4,7 @@
     <v-toolbar-title>teamBuilder</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items>
-      <v-btn flat @click="logout" v-show="loginFlag" dark>Logout</v-btn>
+      <v-btn text @click="logout" v-show="loginFlag" dark>Logout</v-btn>
       <v-btn text @click="to_messages">
         <v-badge right color="red" v-show="messageNum !== 0">
           <span slot="badge">{{messageNum}}</span>
