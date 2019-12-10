@@ -642,7 +642,6 @@ router.post("/delete_member",  (req, res, next) => {
     var username = req.body.username;
     var teamId = req.body.teamid;
     var player = req.body.player;
-    //TODO:delete from user's team list.
     Teams.findOne({
         _id: teamId,
     }, (err, doc)=> {
@@ -662,6 +661,23 @@ router.post("/delete_member",  (req, res, next) => {
                         }
                     }
                     doc.save();
+                    Users.findOne({
+                        username: username,
+                    }, (err, doc2)=> {
+                        if (err) {
+                            on_err(req, res, err, "error when delete team member.");
+                        }else{
+                            if (doc2) {
+                                for (var j = 0; j < doc2.team.length; j++) {
+                                    if (doc.team[j] == teamId) {
+                                        doc.team.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                            }
+                            doc2.save();
+                        }
+                    });
                     res.json({
                         status:'200',
                         message:"",
