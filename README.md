@@ -1,6 +1,6 @@
 # 297teambuilder
 
-> A Vue.js project
+> TeamBuilder is a social media platform for gamers. It can recommend players to each other based on their gaming preferences and social status. If the player gets a match, the player can become friends with each other by sending and accepting requests and then form teams to play together. The team owner can organize the team and schedule some team activities and all the team members can see those activities in their calendar. We also provide chatrooms so that team members can communicate with each other.
 
 ## Build Setup
 
