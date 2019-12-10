@@ -32,6 +32,34 @@ app.use((req, res, next)=>{
 
 }
     );
+
+// socket server set up
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(4001);
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+io.on('connection', function (socket) {
+  console.log(socket.handshake.query['name']);
+  io.emit('new member', socket.handshake.query['name'] + ' is connect now.');
+  socket.on('text', function (data) {
+    console.log(data);
+    var room = data['room'];
+    io.to(room).emit('new message', data);
+  });
+  socket.on('create', function(room) {
+    socket.join(room);
+  });
+  socket.on('disconnect', function () {
+    console.log(socket.handshake.query['name'] + ' is disconnected.');
+    io.emit('user disconnected', socket.handshake.query['name']);
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
