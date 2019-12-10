@@ -667,7 +667,6 @@ router.post("/delete_member",  (req, res, next) => {
     var username = req.body.username;
     var teamId = req.body.teamid;
     var player = req.body.player;
-    //TODO:delete from user's team list.
     Teams.findOne({
         _id: teamId,
     }, (err, doc)=> {
