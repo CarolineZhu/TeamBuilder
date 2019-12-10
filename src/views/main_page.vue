@@ -255,12 +255,7 @@
                       name: 'Weekly CS:GO',
                       start: '2019-11-18 09:00',
                       end: '2019-11-19 10:00',
-                  },
-                  {
-                      name: 'GTA5 mission',
-                      start: '2019-11-21 12:30',
-                      end: '2019-11-21 15:30',
-                  },
+                  }
               ],
               showTeams:false,
               newTeamName:"",
@@ -356,6 +351,13 @@
                       teamid:this.teams[i]['id']
                   }}).then((res)=>{
                       var acts = res.data.result.activities;
+                      this.events=[
+                          {
+                              name: 'Weekly CS:GO',
+                              start: '2019-11-18 09:00',
+                              end: '2019-11-19 10:00',
+                          }
+                      ]
                       for(var j=0;j<acts.length;j++){
                         this.events.push({
                             name:acts[j]['title'],
